@@ -9,7 +9,7 @@ const links = [
   { href: "/services", label: "Services" },
   { href: "/how-it-works", label: "How it works" },
   { href: "/pricing", label: "Pricing" },
-  { href: "/pam", label: "Pam Automation" },
+  { href: "/portal", label: "Dashboard" },
   { href: "/reports", label: "Weekly Report" },
 ];
 
