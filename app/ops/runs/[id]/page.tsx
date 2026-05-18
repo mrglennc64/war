@@ -68,6 +68,7 @@ export default function RunDetailPage({
   const all = Object.values(run.jobs);
   const done = all.filter((j) => j.status === "done" || j.status === "failed").length;
   const total = all.length;
+  const allFinished = done === total;
   const overallScore = (() => {
     const completed = all.filter((j) => j.status === "done" && j.result);
     if (completed.length === 0) return null;
@@ -111,6 +112,21 @@ export default function RunDetailPage({
           </div>
         </div>
       </div>
+
+      {allFinished && (
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-wa-primary bg-wa-primary-soft px-4 py-3">
+          <p className="text-sm text-text">
+            <span className="font-semibold">Run complete.</span>{" "}
+            <span className="text-text-muted">Download the Health Report PDF for {run.customer}.</span>
+          </p>
+          <a
+            href={`/api/ops/runs/${run.id}/pdf`}
+            className="inline-flex items-center gap-2 rounded-md bg-wa-primary px-4 py-2 text-sm font-medium text-white hover:bg-wa-primary-dark"
+          >
+            Download Health Report PDF
+          </a>
+        </div>
+      )}
 
       <div className="mt-8 space-y-4">
         {channels.map((ch) => {
