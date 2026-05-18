@@ -1,12 +1,17 @@
 "use client";
 
-import { use } from "react";
+import { use, useState } from "react";
 import Link from "next/link";
 import useSWR from "swr";
 import type { Job, Run } from "@/lib/jobs/types";
 import { channelLabels, channels } from "@/lib/jobs/types";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
+
+type ApiPayload = {
+  run: Run;
+  share?: { path: string; expiresAt: number } | null;
+};
 
 const statusStyles: Record<
   Job["status"],
@@ -31,7 +36,7 @@ export default function RunDetailPage({
 }) {
   const { id } = use(params);
 
-  const { data, error } = useSWR<{ run: Run }>(
+  const { data, error } = useSWR<ApiPayload>(
     `/api/ops/runs/${id}`,
     fetcher,
     {
@@ -114,18 +119,7 @@ export default function RunDetailPage({
       </div>
 
       {allFinished && (
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-wa-primary bg-wa-primary-soft px-4 py-3">
-          <p className="text-sm text-text">
-            <span className="font-semibold">Run complete.</span>{" "}
-            <span className="text-text-muted">Download the Health Report PDF for {run.customer}.</span>
-          </p>
-          <a
-            href={`/api/ops/runs/${run.id}/pdf`}
-            className="inline-flex items-center gap-2 rounded-md bg-wa-primary px-4 py-2 text-sm font-medium text-white hover:bg-wa-primary-dark"
-          >
-            Download Health Report PDF
-          </a>
-        </div>
+        <CompletionPanel run={run} share={data.share ?? null} />
       )}
 
       <div className="mt-8 space-y-4">
@@ -221,6 +215,78 @@ export default function RunDetailPage({
         })}
       </div>
     </>
+  );
+}
+
+function CompletionPanel({
+  run,
+  share,
+}: {
+  run: Run;
+  share: { path: string; expiresAt: number } | null;
+}) {
+  const [copied, setCopied] = useState(false);
+  const shareUrl =
+    share && typeof window !== "undefined"
+      ? `${window.location.origin}${share.path}`
+      : null;
+
+  const onCopy = async () => {
+    if (!shareUrl) return;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      // Clipboard blocked — leave the URL visible so user can copy manually.
+    }
+  };
+
+  const expiresDate = share
+    ? new Date(share.expiresAt * 1000).toLocaleDateString()
+    : null;
+
+  return (
+    <div className="mt-6 rounded-lg border border-wa-primary bg-wa-primary-soft p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-text">
+          <span className="font-semibold">Run complete.</span>{" "}
+          <span className="text-text-muted">
+            Health Report ready for {run.customer}.
+          </span>
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <a
+            href={`/api/ops/runs/${run.id}/pdf`}
+            className="inline-flex items-center gap-2 rounded-md bg-wa-primary px-4 py-2 text-sm font-medium text-white hover:bg-wa-primary-dark"
+          >
+            Download PDF
+          </a>
+          {shareUrl && (
+            <button
+              type="button"
+              onClick={onCopy}
+              className="inline-flex items-center gap-2 rounded-md border border-wa-primary bg-surface px-4 py-2 text-sm font-medium text-wa-primary hover:bg-wa-primary-soft"
+            >
+              {copied ? "✓ Copied!" : "Copy share link"}
+            </button>
+          )}
+        </div>
+      </div>
+      {shareUrl && (
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
+          <span className="font-semibold text-text-muted">Customer link:</span>
+          <code className="break-all rounded border border-border bg-surface px-2 py-1 font-mono text-[11px] text-text">
+            {shareUrl}
+          </code>
+          {expiresDate && (
+            <span className="text-text-muted">
+              expires {expiresDate} · auth-free
+            </span>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 
