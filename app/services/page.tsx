@@ -40,7 +40,7 @@ export default function ServicesPage() {
 
         <div className="mt-12 flex flex-wrap gap-3">
           <Button href="/pricing">See Pricing</Button>
-          <Button href="/pam" variant="outline">Pam Automation</Button>
+          <Button href="/portal" variant="outline">Open Dashboard</Button>
         </div>
       </Container>
     </Section>

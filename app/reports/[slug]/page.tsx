@@ -57,12 +57,12 @@ export default async function ReportDetailPage({
 
         <div className="mt-8 flex flex-wrap gap-3">
           <Button href={report.pdfUrl}>Download PDF</Button>
-          <Button href="/pam" variant="outline">How Pam generates this</Button>
+          <Button href="/portal" variant="outline">Open Dashboard</Button>
         </div>
 
         <div className="mt-12 rounded-lg border border-border bg-surface p-6 text-sm text-text-muted">
           <p>
-            This is a placeholder report record. Once Pam is wired up, weekly reports will be written here automatically and the PDF link will point to Pam-generated output.
+            This is a placeholder report record. Once the automation is wired up, weekly reports will be written here automatically.
           </p>
         </div>
       </Container>
