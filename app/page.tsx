@@ -96,17 +96,6 @@ export default function HomePage() {
         </Container>
       </Section>
 
-      <Section className="border-t border-border">
-        <Container>
-          <h2 className="text-2xl sm:text-3xl font-semibold text-text">Pam Automation Dashboard</h2>
-          <p className="mt-3 text-text-muted max-w-2xl">
-            Automated weekly checks, reports, and monitoring — designed so reviews happen on cadence, not just when someone remembers.
-          </p>
-          <div className="mt-8">
-            <Button href="/pam" variant="outline">View Dashboard</Button>
-          </div>
-        </Container>
-      </Section>
     </>
   );
 }
