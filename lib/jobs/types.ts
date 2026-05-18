@@ -1,4 +1,4 @@
-export type Channel = "audit" | "seo" | "funnel" | "email" | "social";
+export type Channel = "audit" | "seo" | "funnel" | "email" | "social" | "browser";
 
 export type JobStatus = "pending" | "running" | "done" | "failed";
 
@@ -37,12 +37,20 @@ export type Run = {
   jobs: Record<Channel, Job>;
 };
 
-export const channels: Channel[] = ["audit", "seo", "funnel", "email", "social"];
+export const channels: Channel[] = [
+  "audit",
+  "seo",
+  "funnel",
+  "email",
+  "social",
+  "browser",
+];
 
 export const channelLabels: Record<Channel, string> = {
   audit: "Audit & CRO",
   seo: "SEO / technical",
-  funnel: "Funnel / payment",
+  funnel: "Funnel / payment (static)",
   email: "Email",
   social: "Social",
+  browser: "Synthetic browser check",
 };

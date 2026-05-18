@@ -5,6 +5,7 @@ import { runSeo } from "./seo";
 import { runFunnel } from "./funnel";
 import { runEmail } from "./email";
 import { runSocial } from "./social";
+import { runBrowser } from "./browser";
 
 const handlers: Record<Channel, (url: string) => Promise<{
   score: number;
@@ -17,6 +18,7 @@ const handlers: Record<Channel, (url: string) => Promise<{
   funnel: runFunnel,
   email: runEmail,
   social: runSocial,
+  browser: runBrowser,
 };
 
 /**
