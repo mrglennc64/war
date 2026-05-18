@@ -30,10 +30,12 @@ export function Nav() {
     getScrollServerSnapshot
   );
 
-  // Hide the marketing nav on logged-in portal routes, login pages, and ops tools.
+  // Hide the marketing nav on logged-in portal routes, login pages, ops
+  // tools, and customer-facing shared reports.
   if (
     pathname.startsWith("/portal") ||
     pathname.startsWith("/ops") ||
+    pathname.startsWith("/r/") ||
     pathname === "/login"
   )
     return null;

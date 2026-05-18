@@ -226,15 +226,16 @@ function CompletionPanel({
   share: { path: string; expiresAt: number } | null;
 }) {
   const [copied, setCopied] = useState(false);
-  const shareUrl =
+  // The share path is the customer dashboard URL (HTML), not the PDF.
+  const dashboardUrl =
     share && typeof window !== "undefined"
       ? `${window.location.origin}${share.path}`
       : null;
 
   const onCopy = async () => {
-    if (!shareUrl) return;
+    if (!dashboardUrl) return;
     try {
-      await navigator.clipboard.writeText(shareUrl);
+      await navigator.clipboard.writeText(dashboardUrl);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1800);
     } catch {
@@ -262,22 +263,32 @@ function CompletionPanel({
           >
             Download PDF
           </a>
-          {shareUrl && (
+          {dashboardUrl && (
+            <a
+              href={dashboardUrl}
+              target="_blank"
+              rel="noopener"
+              className="inline-flex items-center gap-2 rounded-md border border-wa-primary bg-surface px-4 py-2 text-sm font-medium text-wa-primary hover:bg-wa-primary-soft"
+            >
+              Preview customer dashboard ↗
+            </a>
+          )}
+          {dashboardUrl && (
             <button
               type="button"
               onClick={onCopy}
               className="inline-flex items-center gap-2 rounded-md border border-wa-primary bg-surface px-4 py-2 text-sm font-medium text-wa-primary hover:bg-wa-primary-soft"
             >
-              {copied ? "✓ Copied!" : "Copy share link"}
+              {copied ? "✓ Copied!" : "Copy customer link"}
             </button>
           )}
         </div>
       </div>
-      {shareUrl && (
+      {dashboardUrl && (
         <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
-          <span className="font-semibold text-text-muted">Customer link:</span>
+          <span className="font-semibold text-text-muted">Customer dashboard URL:</span>
           <code className="break-all rounded border border-border bg-surface px-2 py-1 font-mono text-[11px] text-text">
-            {shareUrl}
+            {dashboardUrl}
           </code>
           {expiresDate && (
             <span className="text-text-muted">

@@ -8,6 +8,7 @@ export function Footer() {
   if (
     pathname.startsWith("/portal") ||
     pathname.startsWith("/ops") ||
+    pathname.startsWith("/r/") ||
     pathname === "/login"
   )
     return null;
