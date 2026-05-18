@@ -34,8 +34,10 @@ function wirePageEvents(page: Page, cap: CapturedSignal) {
       if (text && cap.consoleErrors.length < 20) cap.consoleErrors.push(text);
     }
   });
-  page.on("pageerror", (err) => {
-    if (cap.pageErrors.length < 20) cap.pageErrors.push(err.message);
+  page.on("pageerror", (err: unknown) => {
+    if (cap.pageErrors.length >= 20) return;
+    const msg = err instanceof Error ? err.message : String(err);
+    cap.pageErrors.push(msg);
   });
   page.on("response", (res) => {
     const url = res.url();

@@ -451,6 +451,5 @@ function HealthReport({ run }: { run: Run }) {
 }
 
 export async function renderHealthReportPdf(run: Run): Promise<Buffer> {
-  // @ts-expect-error — @react-pdf typings accept ReactElement; cast handled internally
   return await renderToBuffer(<HealthReport run={run} />);
 }
