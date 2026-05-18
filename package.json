@@ -10,9 +10,11 @@
     "generate:pdf": "node tools/generate-sample-pdf.mjs"
   },
   "dependencies": {
+    "cheerio": "^1.2.0",
     "next": "16.2.4",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "swr": "^2.4.1"
   },
   "devDependencies": {
     "@react-pdf/renderer": "^4.5.1",

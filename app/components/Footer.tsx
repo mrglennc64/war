@@ -5,7 +5,12 @@ import { Container } from "./Container";
 
 export function Footer() {
   const pathname = usePathname();
-  if (pathname.startsWith("/portal") || pathname === "/login") return null;
+  if (
+    pathname.startsWith("/portal") ||
+    pathname.startsWith("/ops") ||
+    pathname === "/login"
+  )
+    return null;
 
   const year = new Date().getFullYear();
   return (

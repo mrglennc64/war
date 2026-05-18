@@ -30,8 +30,13 @@ export function Nav() {
     getScrollServerSnapshot
   );
 
-  // Hide the marketing nav on logged-in portal routes and the login page.
-  if (pathname.startsWith("/portal") || pathname === "/login") return null;
+  // Hide the marketing nav on logged-in portal routes, login pages, and ops tools.
+  if (
+    pathname.startsWith("/portal") ||
+    pathname.startsWith("/ops") ||
+    pathname === "/login"
+  )
+    return null;
 
   const isActive = (href: string) =>
     pathname === href || (href !== "/" && pathname.startsWith(href));
