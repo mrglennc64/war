@@ -33,8 +33,9 @@ export async function proxy(req: NextRequest) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  const url = req.nextUrl.clone();
-  url.pathname = "/ops/login";
-  url.searchParams.set("next", pathname);
-  return NextResponse.redirect(url);
+  const host = req.headers.get("host") ?? req.nextUrl.host;
+  const proto = req.headers.get("x-forwarded-proto") ?? req.nextUrl.protocol.replace(":", "");
+  const search = new URLSearchParams();
+  search.set("next", pathname);
+  return NextResponse.redirect(`${proto}://${host}/ops/login?${search.toString()}`);
 }

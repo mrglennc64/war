@@ -1,6 +1,15 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { OPS_COOKIE, makeCookieValue } from "@/lib/ops-auth";
 
+// Build an absolute URL using the Host header the client actually used,
+// not req.nextUrl which can default to localhost behind a direct IP.
+function buildUrlFromRequest(req: NextRequest, path: string, search?: URLSearchParams): string {
+  const host = req.headers.get("host") ?? req.nextUrl.host;
+  const proto = req.headers.get("x-forwarded-proto") ?? req.nextUrl.protocol.replace(":", "");
+  const qs = search && [...search].length > 0 ? `?${search.toString()}` : "";
+  return `${proto}://${host}${path}${qs}`;
+}
+
 export async function POST(req: NextRequest) {
   const password = process.env.OPS_PASSWORD;
   const secret = process.env.OPS_AUTH_SECRET;
@@ -16,18 +25,15 @@ export async function POST(req: NextRequest) {
   const next = String(form.get("next") ?? "/ops/runs");
 
   if (submitted !== password) {
-    const url = req.nextUrl.clone();
-    url.pathname = "/ops/login";
-    url.searchParams.set("error", "1");
-    if (next) url.searchParams.set("next", next);
-    return NextResponse.redirect(url, { status: 303 });
+    const search = new URLSearchParams();
+    search.set("error", "1");
+    if (next) search.set("next", next);
+    return NextResponse.redirect(buildUrlFromRequest(req, "/ops/login", search), { status: 303 });
   }
 
   const value = await makeCookieValue(secret);
-  const url = req.nextUrl.clone();
-  url.pathname = next.startsWith("/ops") ? next : "/ops/runs";
-  url.search = "";
-  const res = NextResponse.redirect(url, { status: 303 });
+  const target = next.startsWith("/ops") ? next : "/ops/runs";
+  const res = NextResponse.redirect(buildUrlFromRequest(req, target), { status: 303 });
   res.cookies.set(OPS_COOKIE, value, {
     httpOnly: true,
     sameSite: "lax",
