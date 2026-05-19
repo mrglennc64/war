@@ -186,15 +186,25 @@ ${JSON.stringify(raw, null, 2)}`;
     },
   };
 
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(body),
-  });
+  // Retry transient 5xx (overload) with exponential backoff. Quota/auth
+  // errors (4xx) fail fast — they will not get better.
+  let res: Response | null = null;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    res = await fetch(url, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    if (res.ok) break;
+    if (res.status >= 400 && res.status < 500) break;
+    const wait = 500 * Math.pow(2, attempt);
+    console.warn(`[carina-rewrite] Gemini ${res.status}, retrying in ${wait}ms (attempt ${attempt + 1}/3)`);
+    await new Promise((r) => setTimeout(r, wait));
+  }
 
-  if (!res.ok) {
-    const text = await res.text();
-    console.error("[carina-rewrite] Gemini API error", res.status, text.slice(0, 300));
+  if (!res || !res.ok) {
+    const text = res ? await res.text() : "no response";
+    console.error("[carina-rewrite] Gemini API error", res?.status ?? "unknown", text.slice(0, 300));
     return null;
   }
 
