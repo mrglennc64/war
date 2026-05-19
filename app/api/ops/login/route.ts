@@ -34,10 +34,11 @@ export async function POST(req: NextRequest) {
   const value = await makeCookieValue(secret);
   const target = next.startsWith("/ops") ? next : "/ops/runs";
   const res = NextResponse.redirect(buildUrlFromRequest(req, target), { status: 303 });
+  const proto = req.headers.get("x-forwarded-proto") ?? req.nextUrl.protocol.replace(":", "");
   res.cookies.set(OPS_COOKIE, value, {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: proto === "https",
     path: "/",
     maxAge: 60 * 60 * 24 * 14,
   });
