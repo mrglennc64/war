@@ -17,12 +17,21 @@ import {
 } from "@react-pdf/renderer";
 import {
   channels,
-  channelLabels,
   type Channel,
   type Finding,
   type Job,
   type Run,
 } from "@/lib/jobs/types";
+
+// Carina-tone channel labels (override the lowercase scanner labels)
+const channelLabels: Record<Channel, string> = {
+  audit: "Audit & CRO",
+  seo: "SEO / Technical",
+  funnel: "Funnel / Payment",
+  email: "Email",
+  social: "Social",
+  browser: "Synthetic Browser Check",
+};
 
 // ── Tokens ──────────────────────────────────────────────────────────────
 const C = {
@@ -152,6 +161,21 @@ const styles = StyleSheet.create({
     color: C.text,
     marginTop: 6,
     marginBottom: 2,
+  },
+
+  fieldLabel: {
+    fontSize: 9,
+    fontFamily: "Helvetica-Bold",
+    color: C.primary,
+    letterSpacing: 0.6,
+    textTransform: "uppercase",
+    marginTop: 10,
+    marginBottom: 4,
+  },
+  fieldValue: {
+    fontSize: 10,
+    color: C.text,
+    lineHeight: 1.5,
   },
 
   findingRow: {
@@ -514,20 +538,20 @@ function toCarinaLines(label: string, detail: string | undefined, severity: Find
 
 function carinaScope(ch: Channel, run: Run): string {
   if (ch === "audit" || ch === "seo" || ch === "email" || ch === "social") {
-    return "Scope: Homepage.";
+    return "Homepage.";
   }
   if (ch === "funnel") {
     const target = (run.jobs.funnel.result?.details as { targetCheckout?: string } | undefined)?.targetCheckout;
     if (target) {
       try {
-        return `Scope: Checkout path ${new URL(target).pathname}.`;
+        return `Checkout path: ${new URL(target).pathname}.`;
       } catch {
-        return "Scope: Checkout path detected.";
+        return "Checkout path detected.";
       }
     }
-    return "Scope: Homepage. No checkout path detected.";
+    return "Homepage. No checkout path detected.";
   }
-  if (ch === "browser") return "Scope: Homepage + Checkout.";
+  if (ch === "browser") return "Homepage + Checkout.";
   return "";
 }
 
@@ -602,14 +626,6 @@ function statusFor(score: number) {
   if (score >= 85) return { label: "HEALTHY", border: C.okBorder, bg: C.okSoft, fg: C.ok };
   if (score >= 60) return { label: "NEEDS WORK", border: C.warnBorder, bg: C.warnSoft, fg: C.warn };
   return { label: "CRITICAL ISSUES", border: C.dangerBorder, bg: C.dangerSoft, fg: C.danger };
-}
-
-function statusForFindings(findings: Finding[]) {
-  const hasIssue = findings.some((f) => f.severity === "issue");
-  const hasWarn = findings.some((f) => f.severity === "warn");
-  if (hasIssue) return { label: "Critical", border: C.dangerBorder, bg: C.dangerSoft, fg: C.danger };
-  if (hasWarn) return { label: "Watch", border: C.warnBorder, bg: C.warnSoft, fg: C.warn };
-  return { label: "Pass", border: C.okBorder, bg: C.okSoft, fg: C.ok };
 }
 
 function findingDot(severity: "ok" | "warn" | "issue") {
@@ -788,16 +804,17 @@ function Hero({ run, overallScore }: { run: Run; overallScore: number }) {
   const issues = allFindings.filter((f) => f.severity === "issue").length;
   const warns = allFindings.filter((f) => f.severity === "warn").length;
   const oks = allFindings.filter((f) => f.severity === "ok").length;
+  const date = new Date(run.createdAt).toISOString().split("T")[0];
 
   return (
     <View style={styles.hero}>
       <View style={styles.heroLeft}>
-        <Text style={styles.h1}>{run.customer} — Health Report</Text>
+        <Text style={styles.h1}>{run.hostname} — Health Report</Text>
         <Text style={styles.sub}>
-          {run.url} · {new Date(run.createdAt).toISOString().split("T")[0]} · {completed.length} channels analyzed
+          {date} · {completed.length} channels analyzed · {issues} critical · {warns} watch · {oks} pass
         </Text>
         <Text style={[styles.sub, { marginTop: 8 }] as never}>
-          {issues} critical · {warns} watch · {oks} pass · run {run.id}
+          Run ID: {run.id}
         </Text>
       </View>
       <ScoreCircle score={overallScore} />
@@ -851,7 +868,6 @@ function FindingBullet({ line }: { line: CarinaLine }) {
 
 function ChannelSection({ ch, job, run }: { ch: Channel; job: Job; run: Run }) {
   const findings = job.result?.findings ?? [];
-  const status = statusForFindings(findings);
 
   // Transform findings → Carina lines.
   const lines: CarinaLine[] = [];
@@ -880,38 +896,30 @@ function ChannelSection({ ch, job, run }: { ch: Channel; job: Job; run: Run }) {
   return (
     <View style={styles.channelBlock} wrap={true}>
       <View style={styles.channelHead}>
-        <View style={styles.channelHeadLeft}>
-          <Text style={styles.channelTitle}>{channelLabels[ch]}</Text>
-          {job.result && (
-            <View
-              style={[styles.statusPill, { borderColor: status.border, backgroundColor: status.bg }] as never}
-            >
-              <Text style={[styles.statusPillText, { color: status.fg }] as never}>{status.label}</Text>
-            </View>
-          )}
-        </View>
-        {job.result && (
-          <View style={styles.channelScoreBox}>
-            <Text style={styles.channelScoreText}>{job.result.score}/100</Text>
-          </View>
-        )}
+        <Text style={styles.channelTitle}>
+          {channelLabels[ch]}
+          {job.result ? ` — ${job.result.score}` : ""}
+        </Text>
       </View>
-      {job.result && <Text style={styles.channelScope}>{carinaScope(ch, run)}</Text>}
       {job.status === "failed" && (
         <Text style={[styles.channelScope, { color: C.danger }] as never}>
           Job failed: {job.error}
         </Text>
       )}
 
-      {ch === "browser" ? (
-        <BrowserFindings lines={lines} />
-      ) : (
-        lines.map((line, i) => <FindingBullet key={i} line={line} />)
-      )}
-
       {job.result && (
-        <View style={styles.actionBlock}>
-          <Text style={styles.actionLabel}>Required action</Text>
+        <>
+          <Text style={styles.fieldLabel}>Scope</Text>
+          <Text style={styles.fieldValue}>{carinaScope(ch, run)}</Text>
+
+          <Text style={styles.fieldLabel}>Findings</Text>
+          {ch === "browser" ? (
+            <BrowserFindings lines={lines} />
+          ) : (
+            lines.map((line, i) => <FindingBullet key={i} line={line} />)
+          )}
+
+          <Text style={styles.fieldLabel}>Required Action</Text>
           {actions.length === 0 ? (
             <View style={styles.actionRow}>
               <Text style={styles.actionDot}>•</Text>
@@ -925,7 +933,7 @@ function ChannelSection({ ch, job, run }: { ch: Channel; job: Job; run: Run }) {
               </View>
             ))
           )}
-        </View>
+        </>
       )}
     </View>
   );
