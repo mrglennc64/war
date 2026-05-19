@@ -1,9 +1,11 @@
 import type { NextRequest } from "next/server";
 import { getRun } from "@/lib/jobs/store";
 import { renderHealthReportPdf } from "@/lib/pdf/health-report";
+import { rewriteToCarina } from "@/lib/pdf/carina-rewrite";
 import { verifyShareToken } from "@/lib/share-link";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 function plainText(message: string, status: number) {
   return new Response(message, {
@@ -39,7 +41,8 @@ export async function GET(
   const run = getRun(runId);
   if (!run) return plainText("Report not found.", 404);
 
-  const pdf = await renderHealthReportPdf(run);
+  const carina = (await rewriteToCarina(run)) ?? undefined;
+  const pdf = await renderHealthReportPdf(run, carina);
   const filename = `health-report-${run.hostname}.pdf`;
   return new Response(new Uint8Array(pdf), {
     status: 200,

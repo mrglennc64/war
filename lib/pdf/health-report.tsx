@@ -22,6 +22,7 @@ import {
   type Job,
   type Run,
 } from "@/lib/jobs/types";
+import type { CarinaRewrite } from "@/lib/pdf/carina-rewrite";
 
 // Carina-tone channel labels (override the lowercase scanner labels)
 const channelLabels: Record<Channel, string> = {
@@ -822,11 +823,12 @@ function Hero({ run, overallScore }: { run: Run; overallScore: number }) {
   );
 }
 
-function OverallResult({ run }: { run: Run }) {
+function OverallResult({ run, carina }: { run: Run; carina?: CarinaRewrite }) {
+  const text = carina?.overall_result || buildOverallResult(run);
   return (
     <View style={styles.overallBlock}>
       <Text style={styles.overallLabel}>Overall result</Text>
-      <Text style={styles.overallText}>{buildOverallResult(run)}</Text>
+      <Text style={styles.overallText}>{text}</Text>
     </View>
   );
 }
@@ -866,39 +868,69 @@ function FindingBullet({ line }: { line: CarinaLine }) {
   );
 }
 
-function ChannelSection({ ch, job, run }: { ch: Channel; job: Job; run: Run }) {
+function findCarinaChannel(carina: CarinaRewrite | undefined, ch: Channel) {
+  if (!carina) return undefined;
+  const target = channelLabels[ch];
+  return carina.channels.find((c) => c.name === target || c.name === ch);
+}
+
+function ChannelSection({
+  ch,
+  job,
+  run,
+  carina,
+}: {
+  ch: Channel;
+  job: Job;
+  run: Run;
+  carina?: CarinaRewrite;
+}) {
   const findings = job.result?.findings ?? [];
+  const carinaCh = findCarinaChannel(carina, ch);
 
-  // Transform findings → Carina lines.
-  const lines: CarinaLine[] = [];
-  for (const f of findings) {
-    for (const line of toCarinaLines(f.label, f.detail, f.severity)) {
-      lines.push(line);
+  // Findings: prefer Gemini-rewritten lines; fall back to template transform.
+  let lineTexts: string[];
+  let lineSeverities: Finding["severity"][];
+  if (carinaCh) {
+    lineTexts = carinaCh.findings;
+    lineSeverities = lineTexts.map(() => "ok");
+    // Restore severities by index where the original findings still exist
+    for (let i = 0; i < lineTexts.length && i < findings.length; i++) {
+      lineSeverities[i] = findings[i].severity;
     }
-  }
-
-  // Channel-specific cross-channel injections + synthesized conclusions.
-  if (ch === "funnel") {
-    lines.push(...funnelCrossChannelLines(run));
-    const hasCritical = findings.some((f) => f.severity === "issue") ||
-      (run.jobs.browser.result?.findings ?? []).some((f) =>
-        f.severity === "issue" && /payment|stripe|pay.order|checkout/i.test(f.label));
-    if (hasCritical && job.result) {
-      lines.push({ severity: "issue", text: "Checkout cannot process transactions." });
+  } else {
+    const lines: CarinaLine[] = [];
+    for (const f of findings) {
+      for (const line of toCarinaLines(f.label, f.detail, f.severity)) {
+        lines.push(line);
+      }
     }
-  }
-  if (ch === "social") {
-    lines.push(...socialCrossChannelLines(run));
+    if (ch === "funnel") {
+      lines.push(...funnelCrossChannelLines(run));
+      const hasCritical = findings.some((f) => f.severity === "issue") ||
+        (run.jobs.browser.result?.findings ?? []).some((f) =>
+          f.severity === "issue" && /payment|stripe|pay.order|checkout/i.test(f.label));
+      if (hasCritical && job.result) {
+        lines.push({ severity: "issue", text: "Checkout cannot process transactions." });
+      }
+    }
+    if (ch === "social") {
+      lines.push(...socialCrossChannelLines(run));
+    }
+    lineTexts = lines.map((l) => l.text);
+    lineSeverities = lines.map((l) => l.severity);
   }
 
-  const actions = actionsForChannel(ch, findings, run);
+  const actions = carinaCh ? carinaCh.required_actions : actionsForChannel(ch, findings, run);
+  const scopeText = carinaCh ? carinaCh.scope : carinaScope(ch, run);
+  const scoreText = carinaCh ? carinaCh.score : job.result ? String(job.result.score) : "";
 
   return (
     <View style={styles.channelBlock} wrap={true}>
       <View style={styles.channelHead}>
         <Text style={styles.channelTitle}>
           {channelLabels[ch]}
-          {job.result ? ` — ${job.result.score}` : ""}
+          {scoreText ? ` — ${scoreText}` : ""}
         </Text>
       </View>
       {job.status === "failed" && (
@@ -910,13 +942,23 @@ function ChannelSection({ ch, job, run }: { ch: Channel; job: Job; run: Run }) {
       {job.result && (
         <>
           <Text style={styles.fieldLabel}>Scope</Text>
-          <Text style={styles.fieldValue}>{carinaScope(ch, run)}</Text>
+          <Text style={styles.fieldValue}>{scopeText}</Text>
 
           <Text style={styles.fieldLabel}>Findings</Text>
-          {ch === "browser" ? (
-            <BrowserFindings lines={lines} />
+          {ch === "browser" && !carinaCh ? (
+            <BrowserFindings
+              lines={lineTexts.map((text, i) => ({
+                severity: lineSeverities[i] ?? "ok",
+                text,
+              }))}
+            />
           ) : (
-            lines.map((line, i) => <FindingBullet key={i} line={line} />)
+            lineTexts.map((text, i) => (
+              <FindingBullet
+                key={i}
+                line={{ severity: lineSeverities[i] ?? "ok", text }}
+              />
+            ))
           )}
 
           <Text style={styles.fieldLabel}>Required Action</Text>
@@ -962,8 +1004,8 @@ function BrowserFindings({ lines }: { lines: CarinaLine[] }) {
   );
 }
 
-function Summary({ run }: { run: Run }) {
-  const lines = buildSummary(run);
+function Summary({ run, carina }: { run: Run; carina?: CarinaRewrite }) {
+  const lines = carina?.summary && carina.summary.length > 0 ? carina.summary : buildSummary(run);
   return (
     <View style={styles.summary}>
       <Text style={styles.summaryLabel}>Summary</Text>
@@ -974,7 +1016,15 @@ function Summary({ run }: { run: Run }) {
   );
 }
 
-function AuditTrail({ run }: { run: Run }) {
+function AuditTrail({ run, carina }: { run: Run; carina?: CarinaRewrite }) {
+  if (carina?.audit_trail) {
+    return (
+      <View style={styles.audit}>
+        <Text style={styles.auditLabel}>Audit trail</Text>
+        <Text style={styles.auditText}>{carina.audit_trail}</Text>
+      </View>
+    );
+  }
   const ts = new Date().toISOString().slice(0, 19).replace("T", " ");
   return (
     <View style={styles.audit}>
@@ -996,7 +1046,7 @@ function Footer() {
 }
 
 // ── Document ────────────────────────────────────────────────────────────
-function HealthReport({ run }: { run: Run }) {
+function HealthReport({ run, carina }: { run: Run; carina?: CarinaRewrite }) {
   const completed = channels
     .map((ch) => run.jobs[ch])
     .filter((j) => j.status === "done" && j.result);
@@ -1018,7 +1068,7 @@ function HealthReport({ run }: { run: Run }) {
       <Page size="A4" style={styles.page}>
         <HeaderPill score={overallScore} />
         <Hero run={run} overallScore={overallScore} />
-        <OverallResult run={run} />
+        <OverallResult run={run} carina={carina} />
       </Page>
 
       {/* PAGE 2 — Channel scores table */}
@@ -1031,27 +1081,30 @@ function HealthReport({ run }: { run: Run }) {
       <Page size="A4" style={styles.page}>
         <Text style={styles.sectionHead}>Channel findings</Text>
         {channels.slice(0, 3).map((ch) => (
-          <ChannelSection key={ch} ch={ch} job={run.jobs[ch]} run={run} />
+          <ChannelSection key={ch} ch={ch} job={run.jobs[ch]} run={run} carina={carina} />
         ))}
       </Page>
 
       <Page size="A4" style={styles.page}>
         <Text style={styles.sectionHead}>Channel findings (continued)</Text>
         {channels.slice(3).map((ch) => (
-          <ChannelSection key={ch} ch={ch} job={run.jobs[ch]} run={run} />
+          <ChannelSection key={ch} ch={ch} job={run.jobs[ch]} run={run} carina={carina} />
         ))}
       </Page>
 
       {/* Final page — Summary, Audit trail, Footer */}
       <Page size="A4" style={styles.page}>
-        <Summary run={run} />
-        <AuditTrail run={run} />
+        <Summary run={run} carina={carina} />
+        <AuditTrail run={run} carina={carina} />
         <Footer />
       </Page>
     </Document>
   );
 }
 
-export async function renderHealthReportPdf(run: Run): Promise<Buffer> {
-  return await renderToBuffer(<HealthReport run={run} />);
+export async function renderHealthReportPdf(
+  run: Run,
+  carina?: CarinaRewrite
+): Promise<Buffer> {
+  return await renderToBuffer(<HealthReport run={run} carina={carina} />);
 }

@@ -1,8 +1,10 @@
 import type { NextRequest } from "next/server";
 import { getRun } from "@/lib/jobs/store";
 import { renderHealthReportPdf } from "@/lib/pdf/health-report";
+import { rewriteToCarina } from "@/lib/pdf/carina-rewrite";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 export async function GET(
   _req: NextRequest,
@@ -17,7 +19,8 @@ export async function GET(
     });
   }
 
-  const pdf = await renderHealthReportPdf(run);
+  const carina = (await rewriteToCarina(run)) ?? undefined;
+  const pdf = await renderHealthReportPdf(run, carina);
   const filename = `health-report-${run.hostname}-${run.id}.pdf`;
   // Cast Buffer to a BodyInit-compatible value (Uint8Array).
   return new Response(new Uint8Array(pdf), {
