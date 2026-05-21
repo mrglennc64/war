@@ -1,17 +1,56 @@
+import { mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import type { Run } from "./types";
 
-// Module-level in-memory store. Survives across requests within one Node
-// process; lost on restart. Swap for Postgres when Pam goes live.
+// Persistent JSON-file store. Designed for a single long-running Node process
+// (VPS, Railway, Render, Fly, bare metal). Does NOT work on serverless hosts
+// where the filesystem is per-isolate and ephemeral (Vercel functions,
+// Cloudflare Workers, Lambda). Survives Node restarts on real disks.
+
+const DATA_DIR = process.env.WAR_DATA_DIR || join(process.cwd(), "data");
+const STORE_PATH = join(DATA_DIR, "runs.json");
+
 declare global {
   var __waRunStore: Map<string, Run> | undefined;
 }
 
-const store: Map<string, Run> =
-  globalThis.__waRunStore ?? new Map<string, Run>();
+function loadFromDisk(): Map<string, Run> {
+  try {
+    const raw = readFileSync(STORE_PATH, "utf8");
+    const obj = JSON.parse(raw) as Record<string, Run>;
+    return new Map(Object.entries(obj));
+  } catch (err: unknown) {
+    // ENOENT on first boot is expected. Anything else: warn but don't crash.
+    const code = (err as NodeJS.ErrnoException)?.code;
+    if (code !== "ENOENT") {
+      console.warn(
+        `[jobs/store] could not read ${STORE_PATH} (${code ?? "unknown"}); starting empty.`
+      );
+    }
+    return new Map<string, Run>();
+  }
+}
+
+const store: Map<string, Run> = globalThis.__waRunStore ?? loadFromDisk();
 globalThis.__waRunStore = store;
+
+function persist() {
+  try {
+    mkdirSync(dirname(STORE_PATH), { recursive: true });
+    // Atomic write: tmp file + rename. Prevents a half-written file if the
+    // process is killed mid-write.
+    const tmp = `${STORE_PATH}.tmp`;
+    const obj = Object.fromEntries(store);
+    writeFileSync(tmp, JSON.stringify(obj), "utf8");
+    renameSync(tmp, STORE_PATH);
+  } catch (err) {
+    console.error(`[jobs/store] failed to persist to ${STORE_PATH}:`, err);
+  }
+}
 
 export function saveRun(run: Run) {
   store.set(run.id, run);
+  persist();
 }
 
 export function getRun(id: string): Run | undefined {
@@ -25,7 +64,6 @@ export function listRuns(): Run[] {
 }
 
 export function newRunId(): string {
-  // Short, sortable, URL-safe: timestamp + 4 random chars.
   const ts = Date.now().toString(36);
   const rnd = Math.random().toString(36).slice(2, 6);
   return `${ts}${rnd}`;
