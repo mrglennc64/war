@@ -258,6 +258,34 @@ const styles = StyleSheet.create({
   },
   actionText: { flex: 1, fontSize: 9.5, color: C.text, lineHeight: 1.4 },
 
+  fixitBlock: {
+    marginTop: 6,
+    padding: 8,
+    backgroundColor: "#f6f8fa",
+    borderWidth: 1,
+    borderColor: C.border,
+    borderRadius: 4,
+  },
+  fixitKind: {
+    fontSize: 8.5,
+    fontFamily: "Helvetica-Bold",
+    color: C.primary,
+    letterSpacing: 0.4,
+  },
+  fixitRecord: {
+    fontSize: 9,
+    fontFamily: "Courier",
+    color: C.text,
+    marginTop: 2,
+    lineHeight: 1.35,
+  },
+  fixitRationale: {
+    fontSize: 8.5,
+    color: C.muted,
+    marginTop: 3,
+    lineHeight: 1.4,
+  },
+
   summary: {
     padding: 14,
     borderWidth: 1,
@@ -542,6 +570,10 @@ function carinaScope(ch: Channel, run: Run): string {
   if (ch === "audit" || ch === "seo" || ch === "email" || ch === "social") {
     return "Homepage.";
   }
+  if (ch === "deliverability") {
+    const det = run.jobs.deliverability.result?.details as { domain?: string } | undefined;
+    return det?.domain ? `DNS records of ${det.domain}.` : "Apex domain DNS.";
+  }
   if (ch === "funnel") {
     const target = (run.jobs.funnel.result?.details as { targetCheckout?: string } | undefined)?.targetCheckout;
     if (target) {
@@ -685,6 +717,18 @@ function actionsForChannel(ch: Channel, findings: Finding[], run: Run): string[]
     if (has(/^No email capture on this page$/)) actions.push("Add an email signup form.");
     if (has(/^No mailto: contact link found$/)) actions.push("Add mailto contact link.");
     if (has(/^Privacy or consent signals missing$/)) actions.push("Add privacy and consent indicators.");
+  }
+  if (ch === "deliverability") {
+    if (has(/^No SPF record$/)) actions.push("Add SPF record.");
+    if (has(/^SPF present but weak policy/)) actions.push("Tighten SPF terminating mechanism to ~all or -all.");
+    if (has(/^SPF has \d+ include lookups$/)) actions.push("Reduce SPF include lookups below 10.");
+    if (has(/^No DMARC record$/)) actions.push("Add DMARC record (start at p=none for monitoring).");
+    if (has(/^DMARC policy: p=none/)) actions.push("Promote DMARC policy to p=quarantine after the monitoring period.");
+    if (has(/^DMARC record present but policy not set$/)) actions.push("Set DMARC policy (p=none, p=quarantine, or p=reject).");
+    if (has(/^No DKIM found at common selectors$/)) actions.push("Configure DKIM signing on the sending mail server.");
+    if (has(/^No MX records/)) actions.push("Add MX records.");
+    if (has(/^No MTA-STS record$/)) actions.push("Add MTA-STS record and policy file.");
+    if (has(/^SPF-listed IP .* has no PTR record$/)) actions.push("Add PTR (reverse DNS) records for SPF-authorized IPs.");
   }
   if (ch === "social") {
     if (has(/^No meta description for context/)) actions.push("Add a meta description.");
@@ -976,9 +1020,39 @@ function ChannelSection({
               </View>
             ))
           )}
+
+          {ch === "deliverability" && <DeliverabilityFixIt details={job.result.details} />}
         </>
       )}
     </View>
+  );
+}
+
+type DnsRecommendation = {
+  kind: "TXT" | "PTR" | "FILE";
+  host: string;
+  value: string;
+  rationale: string;
+};
+
+function DeliverabilityFixIt({ details }: { details: unknown }) {
+  const records =
+    ((details as { recommendedRecords?: DnsRecommendation[] } | null | undefined)
+      ?.recommendedRecords) ?? [];
+  if (records.length === 0) return null;
+  return (
+    <>
+      <Text style={styles.fieldLabel}>Recommended DNS additions</Text>
+      {records.map((r, i) => (
+        <View key={i} style={styles.fixitBlock} wrap={false}>
+          <Text style={styles.fixitKind}>
+            {r.kind}   {r.host}
+          </Text>
+          <Text style={styles.fixitRecord}>{r.value}</Text>
+          <Text style={styles.fixitRationale}>{r.rationale}</Text>
+        </View>
+      ))}
+    </>
   );
 }
 

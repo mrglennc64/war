@@ -280,6 +280,91 @@ export async function runDeliverability(rawUrl: string): Promise<JobResult> {
     }
   }
 
+  // Deterministic "fix-it" DNS records. Built from what's missing or weak;
+  // intentionally bypasses any LLM rewrite layer so the operator can paste
+  // them straight into their DNS panel.
+  type DnsRecommendation = {
+    kind: "TXT" | "PTR" | "FILE";
+    host: string;
+    value: string;
+    rationale: string;
+  };
+  const recommendedRecords: DnsRecommendation[] = [];
+
+  if (!spfRecord) {
+    recommendedRecords.push({
+      kind: "TXT",
+      host: domain,
+      value: "v=spf1 include:<your-mail-sender> ~all",
+      rationale: `Adds SPF so receivers can verify authorized senders. Replace <your-mail-sender> with your ESP host (e.g. _spf.google.com, sendgrid.net, spf.protection.outlook.com, _custspf.one.com).`,
+    });
+  } else if (!spfMechanism || spfMechanism === "?all" || spfMechanism === "+all") {
+    const tightened = (effectiveSpf ?? "v=spf1").replace(/\s*[~?\-+]all\s*$/i, "") + " ~all";
+    recommendedRecords.push({
+      kind: "TXT",
+      host: domain,
+      value: tightened,
+      rationale: "Adds a terminating soft-fail policy (~all). Receivers will treat mail from unauthorized senders as suspicious. Promote to -all once confident no legitimate mail uses unauthorized servers.",
+    });
+  }
+
+  if (!dmarcRecord) {
+    recommendedRecords.push({
+      kind: "TXT",
+      host: `_dmarc.${domain}`,
+      value: `v=DMARC1; p=none; rua=mailto:dmarc@${domain}; fo=1`,
+      rationale: `Starts DMARC in monitor mode. Aggregate reports arrive at dmarc@${domain} (create that mailbox first, or use a free aggregator like postmarkapp.com/dmarc). After ~7 days of reports, you will know which IPs send mail under this domain. Then tighten to p=quarantine.`,
+    });
+  } else if (dmarcPolicy === "none") {
+    recommendedRecords.push({
+      kind: "TXT",
+      host: `_dmarc.${domain}`,
+      value: dmarcRecord.replace(/\bp=none\b/i, "p=quarantine"),
+      rationale: "Promotes DMARC from monitor-only to quarantine. Run p=none for at least 7 days first so legitimate senders are confirmed in the aggregate reports — otherwise real mail starts going to spam.",
+    });
+  }
+
+  if (mx.length > 0 && !mtaSts) {
+    const today = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+    recommendedRecords.push({
+      kind: "TXT",
+      host: `_mta-sts.${domain}`,
+      value: `v=STSv1; id=${today}01`,
+      rationale: `Advertises an MTA-STS policy. Also requires the policy file served at https://mta-sts.${domain}/.well-known/mta-sts.txt — contents below.`,
+    });
+    recommendedRecords.push({
+      kind: "FILE",
+      host: `https://mta-sts.${domain}/.well-known/mta-sts.txt`,
+      value: [
+        "version: STSv1",
+        "mode: testing",
+        ...mx.map((m) => `mx: ${m.exchange.replace(/\.$/, "")}`),
+        "max_age: 86400",
+      ].join("\n"),
+      rationale: "Companion policy file for the MTA-STS TXT record. Start in mode: testing; promote to mode: enforce after a week of monitoring.",
+    });
+  }
+
+  if (mx.length > 0 && !tlsRpt) {
+    recommendedRecords.push({
+      kind: "TXT",
+      host: `_smtp._tls.${domain}`,
+      value: `v=TLSRPTv1; rua=mailto:tls-reports@${domain}`,
+      rationale: "Reports TLS handshake failures to your monitoring inbox. Useful once MTA-STS is in place.",
+    });
+  }
+
+  for (const ipCheck of ipChecks) {
+    if (ipCheck.ptr.length === 0) {
+      recommendedRecords.push({
+        kind: "PTR",
+        host: ipCheck.ip,
+        value: `mail.${domain}`,
+        rationale: `Set the reverse-DNS / PTR record for ${ipCheck.ip} at your hosting provider's control panel. Most receivers reject or heavily penalize mail from IPs without matching reverse DNS.`,
+      });
+    }
+  }
+
   const score = scoreFromFindings(findings);
   const summary = `DNS sender-posture for ${domain}. ${findings.filter((f) => f.severity === "issue").length} critical · ${findings.filter((f) => f.severity === "warn").length} watch · ${findings.filter((f) => f.severity === "ok").length} pass.`;
 
@@ -306,6 +391,7 @@ export async function runDeliverability(rawUrl: string): Promise<JobResult> {
       mtaSts: !!mtaSts,
       tlsRpt: !!tlsRpt,
       ipChecks,
+      recommendedRecords,
     },
   };
 }
