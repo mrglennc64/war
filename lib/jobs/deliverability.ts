@@ -129,11 +129,25 @@ export async function runDeliverability(rawUrl: string): Promise<JobResult> {
 
   // ---------- SPF ----------
   const spfRecord = apexTxt.find((r) => /^v=spf1\b/i.test(r));
-  const spfIncludes = spfRecord
-    ? [...spfRecord.matchAll(/include:(\S+)/gi)].map((m) => m[1])
+  // SPF can delegate via `redirect=<domain>`; resolve one hop so we can
+  // analyze the effective record (e.g. gmail.com → _spf.google.com).
+  const spfRedirectTarget = spfRecord?.match(/\bredirect=(\S+)/i)?.[1];
+  let effectiveSpf = spfRecord;
+  if (spfRedirectTarget) {
+    const redirected = await resolveTxtSafe(spfRedirectTarget);
+    const target = redirected.find((r) => /^v=spf1\b/i.test(r));
+    if (target) effectiveSpf = target;
+  }
+  const spfIncludes = effectiveSpf
+    ? [...effectiveSpf.matchAll(/include:(\S+)/gi)].map((m) => m[1])
     : [];
+  // If we followed a redirect, count the redirect target as an authorized
+  // sender too (it's effectively an include).
+  if (spfRedirectTarget && !spfIncludes.includes(spfRedirectTarget)) {
+    spfIncludes.unshift(spfRedirectTarget);
+  }
   const spfEsps = classifyEsps(spfIncludes);
-  const spfMechanism = spfRecord?.match(/[~?\-+]all\s*$/i)?.[0]?.trim();
+  const spfMechanism = effectiveSpf?.match(/[~?\-+]all\s*$/i)?.[0]?.trim();
 
   if (!spfRecord) {
     findings.push({
@@ -276,6 +290,8 @@ export async function runDeliverability(rawUrl: string): Promise<JobResult> {
     details: {
       domain,
       spfRecord: spfRecord ?? null,
+      spfRedirectTarget: spfRedirectTarget ?? null,
+      spfEffectiveRecord: effectiveSpf ?? null,
       spfMechanism: spfMechanism ?? null,
       spfIncludes,
       spfEsps,
