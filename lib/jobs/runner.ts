@@ -4,6 +4,7 @@ import { runAudit } from "./audit";
 import { runSeo } from "./seo";
 import { runFunnel } from "./funnel";
 import { runEmail } from "./email";
+import { runDeliverability } from "./deliverability";
 import { runSocial } from "./social";
 import { runBrowser } from "./browser";
 
@@ -17,6 +18,7 @@ const handlers: Record<Channel, (url: string) => Promise<{
   seo: runSeo,
   funnel: runFunnel,
   email: runEmail,
+  deliverability: runDeliverability,
   social: runSocial,
   browser: runBrowser,
 };

@@ -30,6 +30,7 @@ const channelLabels: Record<Channel, string> = {
   seo: "SEO / Technical",
   funnel: "Funnel / Payment",
   email: "Email",
+  deliverability: "Email Deliverability",
   social: "Social",
   browser: "Synthetic Browser Check",
 };

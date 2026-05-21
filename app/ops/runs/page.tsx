@@ -12,7 +12,7 @@ export default function RunsPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-text">Runs</h1>
           <p className="mt-1 text-sm text-text-muted">
-            Each run kicks off 5 channels in parallel against a URL.
+            Each run kicks off 7 channels in parallel against a URL.
           </p>
         </div>
         <Link

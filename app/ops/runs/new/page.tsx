@@ -39,7 +39,7 @@ export default function NewRunPage() {
     <div className="mx-auto max-w-2xl">
       <h1 className="text-2xl font-bold tracking-tight text-text">New run</h1>
       <p className="mt-1 text-sm text-text-muted">
-        Drop a URL and the 5 channels start in parallel.
+        Drop a URL and the 7 channels start in parallel.
       </p>
 
       <form
@@ -65,7 +65,7 @@ export default function NewRunPage() {
               className="mt-1.5 block w-full rounded-md border border-border bg-bg px-3 py-2 font-mono text-sm text-text focus:border-wa-primary focus:outline-none focus:ring-1 focus:ring-wa-primary"
             />
             <p className="mt-1 text-xs text-text-muted">
-              We fetch the page, parse it, and run all 5 channels against it.
+              We fetch the page, parse it, and run all 7 channels against it.
             </p>
           </div>
 

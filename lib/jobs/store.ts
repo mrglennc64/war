@@ -1,6 +1,6 @@
 import { mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import type { Run } from "./types";
+import { channels, type Run } from "./types";
 
 // Persistent JSON-file store. Designed for a single long-running Node process
 // (VPS, Railway, Render, Fly, bare metal). Does NOT work on serverless hosts
@@ -14,11 +14,37 @@ declare global {
   var __waRunStore: Map<string, Run> | undefined;
 }
 
+/**
+ * Backfill any channels that were added to the codebase after this run was
+ * created. Without this, UI code iterating `channels` would crash on missing
+ * entries in `run.jobs`. The stub job is marked done with an empty result.
+ */
+function backfillMissingChannels(run: Run): boolean {
+  let mutated = false;
+  for (const ch of channels) {
+    if (!run.jobs[ch]) {
+      run.jobs[ch] = {
+        channel: ch,
+        status: "done",
+        result: {
+          score: 0,
+          summary: "(channel added after this run)",
+          findings: [],
+        },
+      };
+      mutated = true;
+    }
+  }
+  return mutated;
+}
+
 function loadFromDisk(): Map<string, Run> {
   try {
     const raw = readFileSync(STORE_PATH, "utf8");
     const obj = JSON.parse(raw) as Record<string, Run>;
-    return new Map(Object.entries(obj));
+    const m = new Map(Object.entries(obj));
+    for (const run of m.values()) backfillMissingChannels(run);
+    return m;
   } catch (err: unknown) {
     // ENOENT on first boot is expected. Anything else: warn but don't crash.
     const code = (err as NodeJS.ErrnoException)?.code;
