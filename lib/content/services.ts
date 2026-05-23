@@ -14,6 +14,16 @@ export const services: Service[] = [
       "Rewrite recommendations",
     ],
     category: "Audit",
+    nameSv: "Fullständig webbplatsbedömning",
+    shortDescriptionSv:
+      "Genomgång av struktur, innehåll, layout och fel på mobil och desktop.",
+    featuresSv: [
+      "Innehållskvalitet och tydlighet",
+      "Granskning av navigation och struktur",
+      "Layoutkontroller för mobil och desktop",
+      "Trasiga länkar, metadata, saknade fält",
+      "Omskrivningsförslag",
+    ],
   },
   {
     slug: "payment-ab-testing",
@@ -27,6 +37,15 @@ export const services: Service[] = [
       "Winning version recommendation",
     ],
     category: "Conversion",
+    nameSv: "A/B-testning av betalningssida",
+    shortDescriptionSv:
+      "Test av rubriker, CTA:er, layout och förtroendeelement.",
+    featuresSv: [
+      "Rubrik- och CTA-varianter",
+      "Layout och förtroendeelement",
+      "Konverteringsspårning",
+      "Rekommenderad vinnande version",
+    ],
   },
   {
     slug: "email-automation-review",
@@ -40,6 +59,15 @@ export const services: Service[] = [
       "Rewrite suggestions",
     ],
     category: "Automation",
+    nameSv: "Granskning av e-postautomatisering",
+    shortDescriptionSv:
+      "Kontroll av triggers, sekvenser, texttydlighet och flödesprestanda.",
+    featuresSv: [
+      "Trigger-validering",
+      "Sekvensstruktur",
+      "Texttydlighet",
+      "Omskrivningsförslag",
+    ],
   },
   {
     slug: "weekly-social-content",
@@ -52,6 +80,14 @@ export const services: Service[] = [
       "Simple visuals",
     ],
     category: "Content",
+    nameSv: "Veckovis innehåll för sociala medier",
+    shortDescriptionSv:
+      "3–5 publiceringsklara inlägg per vecka med enkla visuella element.",
+    featuresSv: [
+      "3–5 inlägg per vecka",
+      "Plattformsklara texter",
+      "Enkla visuella element",
+    ],
   },
   {
     slug: "before-after-health-report",
@@ -65,6 +101,15 @@ export const services: Service[] = [
       "Improvement summary",
     ],
     category: "Reporting",
+    nameSv: "Before/After-hälsorapport",
+    shortDescriptionSv:
+      "Ögonblicksbild och jämförelserapport som visar mätbara förbättringar efter åtgärder.",
+    featuresSv: [
+      "Innehållsöversikt",
+      "Strukturjämförelse",
+      "Förtroendeindikatorer",
+      "Förbättringssammanfattning",
+    ],
   },
   {
     slug: "platform-monitoring",
@@ -78,5 +123,14 @@ export const services: Service[] = [
       "Action list",
     ],
     category: "Monitoring",
+    nameSv: "Plattformsmonitorering",
+    shortDescriptionSv:
+      "Veckovisa scans för fel, innehållsdrift och trasiga flöden — med åtgärdslista.",
+    featuresSv: [
+      "Veckovisa scans",
+      "Felidentifiering",
+      "Förändringsspårning",
+      "Åtgärdslista",
+    ],
   },
 ];

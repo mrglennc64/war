@@ -2,9 +2,11 @@
 
 import { usePathname } from "next/navigation";
 import { Container } from "./Container";
+import { useT } from "../i18n/LocaleProvider";
 
 export function Footer() {
   const pathname = usePathname();
+  const t = useT();
   if (
     pathname.startsWith("/portal") ||
     pathname.startsWith("/ops") ||
@@ -18,7 +20,7 @@ export function Footer() {
     <footer className="mt-auto border-t border-border bg-surface">
       <Container className="flex flex-col gap-3 py-8 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-text-muted">
-          Web Assessment Agency — structured, repeatable checks for websites and SaaS platforms.
+          {t("footer.tagline")}
         </p>
         <p className="text-xs text-text-muted">© {year}</p>
       </Container>

@@ -4,13 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useSyncExternalStore } from "react";
 import { Container } from "./Container";
+import { useLocale, useT } from "../i18n/LocaleProvider";
 
-const links = [
-  { href: "/services", label: "Services" },
-  { href: "/how-it-works", label: "How it works" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/portal", label: "Dashboard" },
-  { href: "/reports", label: "Weekly Report" },
+const linkDefs = [
+  { href: "/services", key: "nav.services" },
+  { href: "/how-it-works", key: "nav.howItWorks" },
+  { href: "/pricing", key: "nav.pricing" },
+  { href: "/portal", key: "nav.dashboard" },
+  { href: "/reports", key: "nav.weeklyReport" },
 ];
 
 const subscribeScroll = (cb: () => void) => {
@@ -23,6 +24,8 @@ const getScrollServerSnapshot = () => false;
 export function Nav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const { locale, setLocale } = useLocale();
+  const t = useT();
 
   const scrolled = useSyncExternalStore(
     subscribeScroll,
@@ -30,8 +33,6 @@ export function Nav() {
     getScrollServerSnapshot
   );
 
-  // Hide the marketing nav on logged-in portal routes, login pages, ops
-  // tools, and customer-facing shared reports.
   if (
     pathname.startsWith("/portal") ||
     pathname.startsWith("/ops") ||
@@ -63,7 +64,7 @@ export function Nav() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-6">
-          {links.map((l) => (
+          {linkDefs.map((l) => (
             <Link
               key={l.href}
               href={l.href}
@@ -73,15 +74,43 @@ export function Nav() {
                   : "text-text-muted hover:text-text"
               }`}
             >
-              {l.label}
+              {t(l.key)}
             </Link>
           ))}
           <Link
             href="/login"
             className="rounded-md border border-wa-primary px-3 py-1.5 text-xs font-medium text-wa-primary hover:bg-wa-primary-soft"
           >
-            Sign in
+            {t("nav.signIn")}
           </Link>
+          <span
+            className="inline-flex overflow-hidden rounded-md border border-border text-[11px] font-semibold"
+            role="group"
+            aria-label="Language"
+          >
+            <button
+              type="button"
+              onClick={() => setLocale("sv")}
+              className={`px-2 py-1 transition-colors ${
+                locale === "sv"
+                  ? "bg-wa-primary text-white"
+                  : "text-text-muted hover:text-text"
+              }`}
+            >
+              SV
+            </button>
+            <button
+              type="button"
+              onClick={() => setLocale("en")}
+              className={`px-2 py-1 transition-colors ${
+                locale === "en"
+                  ? "bg-wa-primary text-white"
+                  : "text-text-muted hover:text-text"
+              }`}
+            >
+              EN
+            </button>
+          </span>
         </nav>
 
         <button
@@ -104,7 +133,7 @@ export function Nav() {
         }`}
       >
         <Container className="flex flex-col gap-1 py-3">
-          {links.map((l) => (
+          {linkDefs.map((l) => (
             <Link
               key={l.href}
               href={l.href}
@@ -115,7 +144,7 @@ export function Nav() {
                   : "text-text-muted hover:text-text hover:bg-bg"
               }`}
             >
-              {l.label}
+              {t(l.key)}
             </Link>
           ))}
           <Link
@@ -123,8 +152,42 @@ export function Nav() {
             onClick={closeMenu}
             className="mt-2 rounded-md border border-wa-primary px-2 py-2 text-sm font-medium text-wa-primary hover:bg-wa-primary-soft"
           >
-            Sign in
+            {t("nav.signIn")}
           </Link>
+          <span
+            className="mt-3 inline-flex overflow-hidden rounded-md border border-border text-xs font-semibold self-start"
+            role="group"
+            aria-label="Language"
+          >
+            <button
+              type="button"
+              onClick={() => {
+                setLocale("sv");
+                closeMenu();
+              }}
+              className={`px-3 py-1.5 transition-colors ${
+                locale === "sv"
+                  ? "bg-wa-primary text-white"
+                  : "text-text-muted hover:text-text"
+              }`}
+            >
+              SV
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setLocale("en");
+                closeMenu();
+              }}
+              className={`px-3 py-1.5 transition-colors ${
+                locale === "en"
+                  ? "bg-wa-primary text-white"
+                  : "text-text-muted hover:text-text"
+              }`}
+            >
+              EN
+            </button>
+          </span>
         </Container>
       </div>
     </header>

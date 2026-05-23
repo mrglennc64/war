@@ -13,6 +13,8 @@ export type TenantSite = {
   lastScan: string;
   issues: number;
   conversionDelta?: string;
+  lastScanSv?: string;
+  conversionDeltaSv?: string;
 };
 
 export type ApprovalKind =
@@ -30,12 +32,18 @@ export type PendingApproval = {
   proposal: string;
   rationale: string;
   submittedAgo: string;
+  titleSv?: string;
+  proposalSv?: string;
+  rationaleSv?: string;
+  submittedAgoSv?: string;
 };
 
 export type TenantActivity = {
   ago: string;
   kind: "report" | "crawl" | "ab" | "email" | "monitor" | "alert";
   message: string;
+  agoSv?: string;
+  messageSv?: string;
 };
 
 export type Tenant = {
@@ -53,12 +61,17 @@ export type Tenant = {
   recentActivity: TenantActivity[];
   nextRun: string;
   quietHours: string;
+  nextRunSv?: string;
+  quietHoursSv?: string;
   latestReport: {
     slug: string;
     week: string;
     date: string;
     summary: string;
     pdfUrl: string;
+    weekSv?: string;
+    summarySv?: string;
+    pdfUrlSv?: string;
   };
 };
 
@@ -88,6 +101,8 @@ export const nordicpay: Tenant = {
       lastScan: "2h ago",
       issues: 0,
       conversionDelta: "+4.1%",
+      lastScanSv: "2h sedan",
+      conversionDeltaSv: "+4,1%",
     },
     {
       domain: "checkout.nordicpay.se",
@@ -95,12 +110,15 @@ export const nordicpay: Tenant = {
       lastScan: "2h ago",
       issues: 1,
       conversionDelta: "+1.2%",
+      lastScanSv: "2h sedan",
+      conversionDeltaSv: "+1,2%",
     },
     {
       domain: "support.nordicpay.se",
       status: "ok",
       lastScan: "2h ago",
       issues: 0,
+      lastScanSv: "2h sedan",
     },
   ],
   pendingApprovals: [
@@ -114,6 +132,12 @@ export const nordicpay: Tenant = {
       rationale:
         "Variant B has won 6 consecutive days at 95% statistical confidence with +4.1% conversion lift.",
       submittedAgo: "4h ago",
+      titleSv: "Rulla Variant B till 100 % på /payment",
+      proposalSv:
+        "Ersätt nuvarande 50/50-split med Variant B (kortare rubrik + trust-rad).",
+      rationaleSv:
+        "Variant B har vunnit 6 dagar i rad med 95 % statistisk säkerhet och +4,1 % konverteringslyft.",
+      submittedAgoSv: "för 4 h sedan",
     },
     {
       id: "ap-2032",
@@ -125,6 +149,12 @@ export const nordicpay: Tenant = {
       rationale:
         "404 link in a transactional email erodes trust. No traffic value remains.",
       submittedAgo: "1d ago",
+      titleSv: "Ta bort trasig länk i checkout-bekräftelsemejl",
+      proposalSv:
+        "Ta bort länken till /products/old-promo i bekräftelsemallen — sidan har returnerat 404 i 12 dagar.",
+      rationaleSv:
+        "404-länk i transaktionsmejl minskar förtroendet. Ingen trafiknytta kvar.",
+      submittedAgoSv: "för 1 dag sedan",
     },
     {
       id: "ap-2033",
@@ -136,6 +166,12 @@ export const nordicpay: Tenant = {
       rationale:
         "Bounce rate on /pricing is 18% above site average; current copy buries the lede.",
       submittedAgo: "2d ago",
+      titleSv: "Skriv om hero-texten på /pricing",
+      proposalSv:
+        "Kort ned hero-texten från 38 ord till 22; börja med “förutsägbar månadsdebitering.”",
+      rationaleSv:
+        "Bounce rate på /pricing är 18 % över sajtens snitt; nuvarande text döljer huvudbudskapet.",
+      submittedAgoSv: "för 2 dagar sedan",
     },
   ],
   recentActivity: [
@@ -143,36 +179,51 @@ export const nordicpay: Tenant = {
       ago: "1h ago",
       kind: "crawl",
       message: "Daily crawl complete — 3 sites · 1 issue",
+      agoSv: "1h sedan",
+      messageSv: "Daily crawl klar — 3 webbplatser · 1 ärende",
     },
     {
       ago: "4h ago",
       kind: "ab",
       message: "Variant B reached 95% confidence on /payment (+4.1%)",
+      agoSv: "4h sedan",
+      messageSv: "Variant B nådde 95 % säkerhet på /payment (+4,1 %)",
     },
     {
       ago: "1d ago",
       kind: "alert",
       message:
         "Broken link detected in checkout confirmation email — pending approval",
+      agoSv: "1d sedan",
+      messageSv:
+        "Trasig länk upptäckt i checkout-mejl — väntar godkännande",
     },
     {
       ago: "2d ago",
       kind: "email",
       message: "Onboarding sequence E1–E3 latency confirmed under 30s",
+      agoSv: "2d sedan",
+      messageSv: "Onboarding-sekvens E1–E3: latens under 30s",
     },
     {
       ago: "3d ago",
       kind: "report",
       message: "Weekly report — Week 19 published",
+      agoSv: "3d sedan",
+      messageSv: "Veckorapport — Vecka 19 publicerad",
     },
     {
       ago: "4d ago",
       kind: "monitor",
       message: "Metadata change detected on /pricing (logged)",
+      agoSv: "4d sedan",
+      messageSv: "Metadataändring upptäckt på /pricing (loggad)",
     },
   ],
   nextRun: "Fri 09:00 — Weekly report",
+  nextRunSv: "Fre 09:00 — Veckorapport",
   quietHours: "21:00 – 07:00 (Europe/Stockholm)",
+  quietHoursSv: "21:00 – 07:00 (Europe/Stockholm)",
   latestReport: {
     slug: "sample-week-20",
     week: "Week 20",
@@ -180,6 +231,10 @@ export const nordicpay: Tenant = {
     summary:
       "All channels reviewed — 0 critical issues. 4 improvements shipped this week, 2 A/B tests concluded, score +6 vs last week.",
     pdfUrl: "/reports/sample-report.pdf",
+    weekSv: "Vecka 20",
+    summarySv:
+      "Alla kanaler granskade — 0 kritiska ärenden. 4 förbättringar publicerade denna vecka, 2 A/B-tester avslutade, poäng +6 jämfört med förra veckan.",
+    pdfUrlSv: "/reports/sample-report-sv.pdf",
   },
 };
 

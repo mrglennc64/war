@@ -4,6 +4,9 @@ export type Service = {
   shortDescription: string;
   features: string[];
   category?: string;
+  nameSv?: string;
+  shortDescriptionSv?: string;
+  featuresSv?: string[];
 };
 
 export type PricingTier = {
@@ -15,6 +18,11 @@ export type PricingTier = {
   ctaHref: string;
   ctaLabel: string;
   highlighted?: boolean;
+  nameSv?: string;
+  priceSv?: string;
+  billingCycleSv?: string;
+  featuresSv?: string[];
+  ctaLabelSv?: string;
 };
 
 export type WeeklyReport = {
@@ -24,6 +32,10 @@ export type WeeklyReport = {
   summary: string;
   pdfUrl: string;
   date: string;
+  titleSv?: string;
+  weekSv?: string;
+  summarySv?: string;
+  pdfUrlSv?: string;
 };
 
 export type PamPlanItem = {

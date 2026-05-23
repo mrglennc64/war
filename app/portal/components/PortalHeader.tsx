@@ -1,7 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import type { Tenant } from "@/lib/content/tenants";
+import { useT } from "../../i18n/LocaleProvider";
 
 export function PortalHeader({ tenant }: { tenant: Tenant }) {
+  const t = useT();
+
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-surface/95 backdrop-blur">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-6 py-3">
@@ -35,20 +40,20 @@ export function PortalHeader({ tenant }: { tenant: Tenant }) {
             className="text-text hover:text-wa-primary"
             aria-current="page"
           >
-            Dashboard
+            {t("portalHeader.dashboard")}
           </Link>
           <Link href="/portal" className="text-text-muted hover:text-text">
-            Reports
+            {t("portalHeader.reports")}
           </Link>
           <Link href="/portal" className="text-text-muted hover:text-text">
-            Settings
+            {t("portalHeader.settings")}
           </Link>
           <span className="h-5 w-px bg-border" aria-hidden />
           <Link
             href="/login"
             className="text-xs text-text-muted hover:text-text"
           >
-            Sign out
+            {t("portalHeader.signOut")}
           </Link>
         </nav>
       </div>
