@@ -8,6 +8,7 @@ import {
   recordFreeScan,
   RATE_LIMIT_MS,
 } from "@/lib/free-scans/store";
+import { isAdminEmail } from "@/lib/admin-emails";
 
 export const runtime = "nodejs";
 
@@ -58,17 +59,20 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const existing = getRecentScanForEmail(email);
-  if (existing) {
-    const scanUrl = await buildScanUrl(existing.runId);
-    return NextResponse.json(
-      {
-        error: "rate_limited",
-        daysUntilNext: daysUntilNextScan(existing.submittedAt),
-        previousScanUrl: scanUrl,
-      },
-      { status: 429 }
-    );
+  const admin = isAdminEmail(email);
+  if (!admin) {
+    const existing = getRecentScanForEmail(email);
+    if (existing) {
+      const scanUrl = await buildScanUrl(existing.runId);
+      return NextResponse.json(
+        {
+          error: "rate_limited",
+          daysUntilNext: daysUntilNextScan(existing.submittedAt),
+          previousScanUrl: scanUrl,
+        },
+        { status: 429 }
+      );
+    }
   }
 
   const id = newRunId();
