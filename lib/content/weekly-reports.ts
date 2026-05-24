@@ -9,10 +9,10 @@ export const weeklyReports: WeeklyReport[] = [
       "Sample of the structured weekly report used for all client assessments. Covers content, structure, payment flow, email, and monitoring observations.",
     pdfUrl: "/reports/sample-report.pdf",
     date: "2026-05-18",
-    titleSv: "Exempel — Veckorapport",
+    titleSv: "Exempel: Veckorapport",
     weekSv: "Vecka 20",
     summarySv:
-      "Ett exempel på den strukturerade rapporten som används i alla kundleveranser. Täcker innehåll, struktur, betalflöde, e-post och observationspunkter från monitoreringen.",
+      "Ett exempel på den strukturerade veckorapporten som används i alla kunduppdrag. Rapporten täcker innehåll, struktur, betalningsflöden, e-postsekvenser och övervakningsresultat.",
     pdfUrlSv: "/reports/sample-report-sv.pdf",
   },
   {
@@ -23,10 +23,10 @@ export const weeklyReports: WeeklyReport[] = [
       "Snapshot and comparison report showing measurable improvement after applied changes. Covers content, payment, email, technical, trust, and SEO state — before and after.",
     pdfUrl: "/reports/sample-before-after.pdf",
     date: "2026-05-18",
-    titleSv: "Exempel — Before/After-rapport",
+    titleSv: "Exempel: Före/Efter-rapport",
     weekSv: "Vecka 20",
     summarySv:
-      "Ögonblicksbild och jämförelse som visar mätbara förändringar efter genomförda åtgärder. Täcker innehåll, betalning, e-post, teknik, förtroende och SEO — före och efter.",
+      "Snapshot och jämförelserapport som visar mätbara förbättringar efter genomförda ändringar. Täcker innehåll, betalningsflöden, e-post, tekniska kontroller, förtroendeindikatorer och SEO — före och efter.",
     pdfUrlSv: "/reports/sample-before-after-sv.pdf",
   },
 ];

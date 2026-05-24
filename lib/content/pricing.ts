@@ -17,7 +17,7 @@ export const pricingTiers: PricingTier[] = [
     priceSv: "499 SEK",
     billingCycleSv: "månad",
     featuresSv: [
-      "Månatlig webbplats-scan",
+      "Månatlig webbskanning",
       "Kontroll av innehållskvalitet",
       "Lista med förbättringar",
     ],
@@ -68,7 +68,7 @@ export const pricingTiers: PricingTier[] = [
     billingCycleSv: "månad",
     featuresSv: [
       "Allt i Standard",
-      "Before/after-rapport",
+      "Före/efter-rapport",
       "Plattformsmonitorering",
       "Prioriterad support",
     ],

@@ -101,7 +101,7 @@ export const nordicpay: Tenant = {
       lastScan: "2h ago",
       issues: 0,
       conversionDelta: "+4.1%",
-      lastScanSv: "2h sedan",
+      lastScanSv: "2 h sedan",
       conversionDeltaSv: "+4,1%",
     },
     {
@@ -110,7 +110,7 @@ export const nordicpay: Tenant = {
       lastScan: "2h ago",
       issues: 1,
       conversionDelta: "+1.2%",
-      lastScanSv: "2h sedan",
+      lastScanSv: "2 h sedan",
       conversionDeltaSv: "+1,2%",
     },
     {
@@ -118,7 +118,7 @@ export const nordicpay: Tenant = {
       status: "ok",
       lastScan: "2h ago",
       issues: 0,
-      lastScanSv: "2h sedan",
+      lastScanSv: "2 h sedan",
     },
   ],
   pendingApprovals: [
@@ -132,11 +132,11 @@ export const nordicpay: Tenant = {
       rationale:
         "Variant B has won 6 consecutive days at 95% statistical confidence with +4.1% conversion lift.",
       submittedAgo: "4h ago",
-      titleSv: "Rulla Variant B till 100 % på /payment",
+      titleSv: "Rulla ut Variant B till 100% på /payment",
       proposalSv:
-        "Ersätt nuvarande 50/50-split med Variant B (kortare rubrik + trust-rad).",
+        "Ersätt nuvarande 50/50-split med Variant B (kortare rubrik + förtroenderad).",
       rationaleSv:
-        "Variant B har vunnit 6 dagar i rad med 95 % statistisk säkerhet och +4,1 % konverteringslyft.",
+        "Variant B har vunnit 6 dagar i rad med 95% statistisk säkerhet och +4,1% konverteringslyft.",
       submittedAgoSv: "för 4 h sedan",
     },
     {
@@ -149,11 +149,11 @@ export const nordicpay: Tenant = {
       rationale:
         "404 link in a transactional email erodes trust. No traffic value remains.",
       submittedAgo: "1d ago",
-      titleSv: "Ta bort trasig länk i checkout-bekräftelsemejl",
+      titleSv: "Ta bort trasig länk i bekräftelsemail",
       proposalSv:
-        "Ta bort länken till /products/old-promo i bekräftelsemallen — sidan har returnerat 404 i 12 dagar.",
+        "Ta bort länken till /products/old-promo i bekräftelsemallen — sidan har gett 404 i 12 dagar.",
       rationaleSv:
-        "404-länk i transaktionsmejl minskar förtroendet. Ingen trafiknytta kvar.",
+        "En 404-länk i ett transaktionsmail minskar förtroendet. Ingen trafiknytta kvarstår.",
       submittedAgoSv: "för 1 dag sedan",
     },
     {
@@ -166,11 +166,11 @@ export const nordicpay: Tenant = {
       rationale:
         "Bounce rate on /pricing is 18% above site average; current copy buries the lede.",
       submittedAgo: "2d ago",
-      titleSv: "Skriv om hero-texten på /pricing",
+      titleSv: "Skriv om hero-stycket på /pricing",
       proposalSv:
-        "Kort ned hero-texten från 38 ord till 22; börja med “förutsägbar månadsdebitering.”",
+        "Kort ner stycket från 38 ord till 22; led med “förutsägbar månadsfakturering”.",
       rationaleSv:
-        "Bounce rate på /pricing är 18 % över sajtens snitt; nuvarande text döljer huvudbudskapet.",
+        "Bounce rate på /pricing är 18% över sajtens snitt; nuvarande text döljer huvudbudskapet.",
       submittedAgoSv: "för 2 dagar sedan",
     },
   ],
@@ -179,51 +179,51 @@ export const nordicpay: Tenant = {
       ago: "1h ago",
       kind: "crawl",
       message: "Daily crawl complete — 3 sites · 1 issue",
-      agoSv: "1h sedan",
-      messageSv: "Daily crawl klar — 3 webbplatser · 1 ärende",
+      agoSv: "nu",
+      messageSv: "Daglig skanning klar — 3 webbplatser · 1 ärende",
     },
     {
       ago: "4h ago",
       kind: "ab",
       message: "Variant B reached 95% confidence on /payment (+4.1%)",
-      agoSv: "4h sedan",
-      messageSv: "Variant B nådde 95 % säkerhet på /payment (+4,1 %)",
+      agoSv: "1 h sedan",
+      messageSv: "Variant B nådde 95% säkerhet på /payment (+4,1%)",
     },
     {
       ago: "1d ago",
       kind: "alert",
       message:
         "Broken link detected in checkout confirmation email — pending approval",
-      agoSv: "1d sedan",
+      agoSv: "4 h sedan",
       messageSv:
-        "Trasig länk upptäckt i checkout-mejl — väntar godkännande",
+        "Trasig länk upptäckt i checkout-mail — väntar på godkännande",
     },
     {
       ago: "2d ago",
       kind: "email",
       message: "Onboarding sequence E1–E3 latency confirmed under 30s",
-      agoSv: "2d sedan",
-      messageSv: "Onboarding-sekvens E1–E3: latens under 30s",
+      agoSv: "1 dag sedan",
+      messageSv: "Onboardingsekvens E1–E3: latens bekräftad under 30 sek",
     },
     {
       ago: "3d ago",
       kind: "report",
       message: "Weekly report — Week 19 published",
-      agoSv: "3d sedan",
-      messageSv: "Veckorapport — Vecka 19 publicerad",
+      agoSv: "2 dagar sedan",
+      messageSv: "Veckorapport — vecka 19 publicerad",
     },
     {
       ago: "4d ago",
       kind: "monitor",
       message: "Metadata change detected on /pricing (logged)",
-      agoSv: "4d sedan",
+      agoSv: "3 dagar sedan",
       messageSv: "Metadataändring upptäckt på /pricing (loggad)",
     },
   ],
   nextRun: "Fri 09:00 — Weekly report",
   nextRunSv: "Fre 09:00 — Veckorapport",
   quietHours: "21:00 – 07:00 (Europe/Stockholm)",
-  quietHoursSv: "21:00 – 07:00 (Europe/Stockholm)",
+  quietHoursSv: "21:00–07:00 (Europe/Stockholm)",
   latestReport: {
     slug: "sample-week-20",
     week: "Week 20",
@@ -233,7 +233,7 @@ export const nordicpay: Tenant = {
     pdfUrl: "/reports/sample-report.pdf",
     weekSv: "Vecka 20",
     summarySv:
-      "Alla kanaler granskade — 0 kritiska ärenden. 4 förbättringar publicerade denna vecka, 2 A/B-tester avslutade, poäng +6 jämfört med förra veckan.",
+      "Alla kanaler granskade — 0 kritiska ärenden. 4 förbättringar genomförda denna vecka, 2 A/B-tester avslutade, poäng +6 jämfört med förra veckan.",
     pdfUrlSv: "/reports/sample-report-sv.pdf",
   },
 };

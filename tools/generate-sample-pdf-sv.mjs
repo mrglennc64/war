@@ -258,41 +258,41 @@ function ScoreCircle({ score = 98, max = 100, size = 90, stroke = 7 }) {
   );
 }
 
-// --- Svensk innehåll (Vecka 20) ---
+// --- Svensk innehåll (Vecka 20) — Hybridton ---
 const kpis = [
-  { label: "Webbplatser scannade", value: "6", sub: "över 3 planer" },
-  { label: "Rent tillstånd", value: "6", sub: "100 % av övervakade" },
-  { label: "Förbättringar publicerade", value: "4", sub: "allt live i produktion" },
+  { label: "Skannade webbplatser", value: "6", sub: "webbplatser över 3 planer" },
+  { label: "CLEAN", value: "6", sub: "100% av övervakade" },
+  { label: "Genomförda förbättringar", value: "4", sub: "alla live" },
   { label: "Öppna ärenden", value: "0", sub: "redo för nästa cykel" },
 ];
 
 const applied = [
-  { n: 2, title: "A/B-test avslutat", desc: "Variant B rullad till 100 % på nordicpay.se (+4,1 %)" },
+  { n: 2, title: "A/B-tester avslutade", desc: "Variant B rullad till 100% på nordicpay.se (+4,1%)" },
   { n: 1, title: "Trasig länk åtgärdad", desc: "helsinki-shop.fi/products/old-promo" },
-  { n: 3, title: "E-posttriggers verifierade", desc: "Onboarding-sekvens E1–E3 latens under 30s" },
-  { n: 4, title: "Metadata uppdaterad", desc: "copenhagen-tech.dk — 4 sidor" },
-  { n: 1, title: "Hero-text omskriven", desc: "stockholm-fitness.se /home — tydlighetspass" },
-  { n: 2, title: "Sociala inlägg publicerade", desc: "Vecka 20 — plattformsklart innehåll" },
+  { n: 3, title: "E-posttriggers verifierade", desc: "Onboardingsekvens E1–E3 levererar under 30 sek" },
+  { n: 4, title: "Metadata uppdaterad", desc: "copenhagen-tech.dk — 4 sidor uppdaterade" },
+  { n: 1, title: "Hero-text omskriven", desc: "stockholm-fitness.se /home — tydlighetsförbättring" },
+  { n: 2, title: "Sociala inlägg publicerade", desc: "Vecka 20 — plattformsredo innehåll" },
 ];
 
 const checks = [
-  "Webbplatsrespons — alla 6 sidor svarar under 1s",
+  "Tillgänglighet — alla 6 sajter svarar under 1s",
   "Innehållsdrift — inga oväntade sidändringar",
-  "Trasiga länkar — 1 hittad och åtgärdad",
-  "Betalflöde — checkout end-to-end OK",
-  "E-posttriggers — onboarding-sekvens levereras under 30s",
-  "Mobil layout — inga overflow-problem på testenheter",
-  "Förtroendesignaler — privacy, terms, kontakt finns",
-  "SEO-basics — title, description, OG-bild finns",
+  "Trasiga länkar — 1 hittad och fixad",
+  "Betalningsflöde — end-to-end test OK",
+  "E-posttriggers — onboarding <30s",
+  "Mobil layout — inga overflow-problem",
+  "Förtroendesignaler — privacy, villkor, kontakt",
+  "SEO-basics — title, description, OG-bild",
 ];
 
 const sites = [
-  { n: 1, site: "nordicpay.se", change: "A/B-variant B rullad till 100 % · +4,1 % konvertering" },
-  { n: 2, site: "helsinki-shop.fi", change: "Trasig länk /products/old-promo åtgärdad" },
-  { n: 3, site: "copenhagen-tech.dk", change: "Metadata uppdaterad på 4 sidor" },
-  { n: 4, site: "aurora-saas.com", change: "E-posttrigger E3 latens under tröskel" },
-  { n: 5, site: "stockholm-fitness.se", change: "Hero-text omskriven på /home" },
-  { n: 6, site: "gothenburg-clinic.se", change: "Ingen ändring — endast övervakad" },
+  { n: 1, site: "nordicpay.se", change: "Variant B rullad · +4,1%" },
+  { n: 2, site: "helsinki-shop.fi", change: "Trasig länk fixad" },
+  { n: 3, site: "copenhagen-tech.dk", change: "Metadata uppdaterad" },
+  { n: 4, site: "aurora-saas.com", change: "Trigger E3 OK" },
+  { n: 5, site: "stockholm-fitness.se", change: "Hero-text omskriven" },
+  { n: 6, site: "gothenburg-clinic.se", change: "Ingen ändring" },
 ];
 
 const Pill = () =>
@@ -317,7 +317,7 @@ const Hero = () =>
       h(
         Text,
         { style: styles.sub },
-        "6 webbplatser scannade · 0 kritiska ärenden · 4 förbättringar publicerade · 2 A/B-tester avslutade. Katalogen är i gott skick och redo för nästa cykel."
+        "6 webbplatser skannade · 0 kritiska ärenden · 4 förbättringar genomförda · 2 A/B-tester avslutade. Katalogen är i stabilt skick och redo för nästa cykel."
       )
     ),
     h(ScoreCircle, { score: 98, max: 100, size: 84 })
@@ -335,7 +335,7 @@ const ScoreStrip = () =>
         Text,
         { style: styles.scoreBefore },
         h(Text, { style: { fontFamily: "Helvetica-Bold" } }, "Förra veckan: "),
-        "92 / 100 — 3 öppna ärenden, 1 konverteringsregression flaggad."
+        "92 / 100 — 3 öppna ärenden, 1 konverteringsfall flaggat."
       ),
       h(
         Text,
@@ -459,7 +459,7 @@ const Ready = () =>
       h(
         Text,
         { style: styles.readyText },
-        "Alla 6 webbplatser passerade kontroller för tillgänglighet, innehåll, betalning, e-post, mobil, förtroende och SEO. Inga öppna ärenden. Daglig crawl fortsätter — nästa veckorapport genereras automatiskt fredag 09:00."
+        "Alla 6 sajter passerade kontroller för tillgänglighet, innehåll, betalning, e-post, mobil, förtroende och SEO. Daglig skanning fortsätter — nästa veckorapport publiceras fredag 09:00."
       )
     )
   );
@@ -468,11 +468,11 @@ const Audit = () =>
   h(
     View,
     { style: styles.audit },
-    h(Text, { style: styles.auditLabel }, "Revisionslogg"),
+    h(Text, { style: styles.auditLabel }, "Revisionsspår"),
     h(
       Text,
       { style: styles.auditText },
-      "Alla 13 ändringar i denna rapport bekräftades av tenant via korrigeringsarket den 2026-05-16. Tenant behåller full kontroll över alla beslut; Pam publicerar endast godkända ändringar."
+      "Alla 13 ändringar i rapporten godkändes av tenant via korrigeringsdokumentet 2026-05-16. Tenant behåller full kontroll över alla beslut; Pam genomför endast godkända ändringar."
     )
   );
 

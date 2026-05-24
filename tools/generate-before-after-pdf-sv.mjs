@@ -217,18 +217,18 @@ const styles = StyleSheet.create({
   },
 });
 
-// --- Sample data ---
+// --- Sample data (Hybridton) ---
 const before = {
   score: 78,
   issues: 11,
   risks: 4,
   conversion: 2.3,
   contentIssues: "Otydlig hero-text på 3 sidor · saknad CTA på /pricing",
-  paymentIssues: "Checkout-bounce 18 % över snitt · Variant A presterar svagt",
-  emailIssues: "E-postsekvens E3 latens över 60s · 2 onboarding-mejl saknar länk",
-  techIssues: "1 trasig länk i transaktionsmejl · 404 i 12 dagar",
-  trustIssues: "Saknar synlig privacy-länk på /payment",
-  seoIssues: "Title saknas på 4 sidor · OG-bild saknas på /home",
+  paymentIssues: "Checkout-bounce 18% över snitt · Variant A underpresterade",
+  emailIssues: "Sekvens E3 över 60s latens · 2 onboarding-mail saknade länk",
+  techIssues: "1 trasig länk i transaktionsmail · 404 i 12 dagar",
+  trustIssues: "Ingen synlig privacy-länk på /payment",
+  seoIssues: "Title saknades på 4 sidor · OG-bild saknades på /home",
 };
 
 const after = {
@@ -236,11 +236,11 @@ const after = {
   issues: 0,
   risks: 0,
   conversion: 6.4,
-  contentStatus: "Hero-texter omskrivna · CTA tillagd",
-  paymentStatus: "Variant B rullad till 100 % (+4,1 % konvertering)",
-  emailStatus: "Latens E1–E3 under 30s · sekvens verifierad",
+  contentStatus: "Hero-text omskriven · CTA tillagd",
+  paymentStatus: "Variant B rullad till 100% (+4,1%)",
+  emailStatus: "E1–E3 under 30s · sekvens verifierad",
   techStatus: "404-länk borttagen · inga fel kvar",
-  trustStatus: "Privacy-länk synlig på alla flöden",
+  trustStatus: "Privacy-länk synlig i alla flöden",
   seoStatus: "Title, description, OG-bild på alla sidor",
 };
 
@@ -253,17 +253,17 @@ const delta = {
 };
 
 const changes = [
-  { n: 1, title: "A/B-variant B rullad till 100 %", desc: "+4,1 % konvertering · 95 % statistisk säkerhet" },
-  { n: 2, title: "Trasig länk åtgärdad", desc: "/products/old-promo borttagen ur transaktionsmejl" },
+  { n: 1, title: "Variant B rullad till 100%", desc: "+4,1% konvertering · 95% säkerhet" },
+  { n: 2, title: "Trasig länk fixad", desc: "/products/old-promo borttagen" },
   { n: 3, title: "Metadata uppdaterad", desc: "Title, description, OG-bild på 4 sidor" },
-  { n: 4, title: "Hero-text omskriven", desc: "/home — tydlighetspass" },
-  { n: 5, title: "E-postsekvens verifierad", desc: "E1–E3 latens under 30s" },
-  { n: 6, title: "Sociala inlägg publicerade", desc: "Vecka 20 — plattformsklart innehåll" },
+  { n: 4, title: "Hero-text omskriven", desc: "/home — tydlighetsförbättring" },
+  { n: 5, title: "E-postsekvens verifierad", desc: "E1–E3 under 30s" },
+  { n: 6, title: "Sociala inlägg publicerade", desc: "Vecka 20 — plattformsredo innehåll" },
 ];
 
 const siteRows = [
-  { site: "nordicpay.se", before: "Watch", after: "Clean", comment: "A/B-variant B rullad" },
-  { site: "helsinki-shop.fi", before: "Issues", after: "Clean", comment: "Länk fixad" },
+  { site: "nordicpay.se", before: "Watch", after: "Clean", comment: "Variant B rullad" },
+  { site: "helsinki-shop.fi", before: "Issues", after: "Clean", comment: "Trasig länk fixad" },
   { site: "copenhagen-tech.dk", before: "Watch", after: "Clean", comment: "Metadata uppdaterad" },
   { site: "aurora-saas.com", before: "Watch", after: "Clean", comment: "Trigger E3 OK" },
   { site: "stockholm-fitness.se", before: "Drift", after: "Stable", comment: "Hero-text omskriven" },
@@ -275,11 +275,11 @@ const Hero = () =>
   h(
     View,
     { style: styles.hero },
-    h(Text, { style: styles.h1 }, "Before/After-rapport — Vecka 20"),
+    h(Text, { style: styles.h1 }, "Före/Efter-rapport — Vecka 20"),
     h(
       Text,
       { style: styles.sub },
-      "6 webbplatser granskade · 0 kritiska ärenden · 4 förbättringar publicerade. Rapporten visar mätbara förändringar före och efter genomförda åtgärder."
+      "6 webbplatser granskade · 0 kritiska ärenden · 4 förbättringar genomförda. Rapporten visar mätbara förändringar före och efter genomförda åtgärder."
     )
   );
 
@@ -298,7 +298,7 @@ const Summary = () =>
         h(Text, { style: styles.baLine }, h(Text, { style: styles.baStrong }, "Poäng: "), `${before.score} / 100`),
         h(Text, { style: styles.baLine }, h(Text, { style: styles.baStrong }, "Öppna ärenden: "), String(before.issues)),
         h(Text, { style: styles.baLine }, h(Text, { style: styles.baStrong }, "Risker: "), String(before.risks)),
-        h(Text, { style: styles.baLine }, h(Text, { style: styles.baStrong }, "Konvertering: "), `${before.conversion} %`)
+        h(Text, { style: styles.baLine }, h(Text, { style: styles.baStrong }, "Konvertering: "), `${before.conversion}%`)
       ),
       h(
         View,
@@ -307,14 +307,14 @@ const Summary = () =>
         h(Text, { style: styles.baLine }, h(Text, { style: styles.baStrong }, "Poäng: "), `${after.score} / 100`),
         h(Text, { style: styles.baLine }, h(Text, { style: styles.baStrong }, "Öppna ärenden: "), String(after.issues)),
         h(Text, { style: styles.baLine }, h(Text, { style: styles.baStrong }, "Åtgärdat: "), String(before.risks)),
-        h(Text, { style: styles.baLine }, h(Text, { style: styles.baStrong }, "Konvertering: "), `${after.conversion} %`)
+        h(Text, { style: styles.baLine }, h(Text, { style: styles.baStrong }, "Konvertering: "), `${after.conversion}%`)
       ),
       h(
         View,
         { style: { ...styles.baCard, ...styles.baCardDelta } },
         h(Text, { style: styles.baLabel }, "Förändring"),
         h(Text, { style: styles.baLine }, `+${delta.score} poäng`),
-        h(Text, { style: styles.baLine }, `+${delta.conversion} % konvertering`),
+        h(Text, { style: styles.baLine }, `+${delta.conversion}% konvertering`),
         h(Text, { style: styles.baLine }, `${Math.abs(delta.issues)} ärenden lösta`),
         h(Text, { style: styles.baLine }, "Alla risker åtgärdade")
       )
@@ -343,10 +343,10 @@ function StatusGroup({ title, items }) {
 
 const BeforeStatus = () =>
   h(StatusGroup, {
-    title: "2.  Före-status",
+    title: "2.  Före-läge",
     items: [
       { head: "Struktur & innehåll", text: before.contentIssues },
-      { head: "Betalflöde", text: before.paymentIssues },
+      { head: "Betalningsflöde", text: before.paymentIssues },
       { head: "E-post & automation", text: before.emailIssues },
       { head: "Tekniska fel", text: before.techIssues },
       { head: "Förtroendesignaler", text: before.trustIssues },
@@ -358,7 +358,7 @@ const Applied = () =>
   h(
     View,
     {},
-    h(Text, { style: styles.sectionHead }, "3.  Genomförda åtgärder"),
+    h(Text, { style: styles.sectionHead }, "3.  Genomförda ändringar"),
     h(
       Text,
       { style: { ...styles.sub, marginBottom: 10 } },
@@ -381,10 +381,10 @@ const Applied = () =>
 
 const AfterStatus = () =>
   h(StatusGroup, {
-    title: "4.  Efter-status",
+    title: "4.  Efter-läge",
     items: [
       { head: "Struktur & innehåll", text: after.contentStatus },
-      { head: "Betalflöde", text: after.paymentStatus },
+      { head: "Betalningsflöde", text: after.paymentStatus },
       { head: "E-post & automation", text: after.emailStatus },
       { head: "Tekniska fel", text: after.techStatus },
       { head: "Förtroendesignaler", text: after.trustStatus },
@@ -395,7 +395,7 @@ const AfterStatus = () =>
 const Metrics = () => {
   const rows = [
     { label: "Poäng", before: String(before.score), after: String(after.score), delta: `+${delta.score}` },
-    { label: "Konvertering", before: `${before.conversion} %`, after: `${after.conversion} %`, delta: `+${delta.conversion} %` },
+    { label: "Konvertering", before: `${before.conversion}%`, after: `${after.conversion}%`, delta: `+${delta.conversion}%` },
     { label: "Öppna ärenden", before: String(before.issues), after: String(after.issues), delta: String(delta.issues) },
     { label: "Trasiga länkar", before: "1", after: "0", delta: String(delta.brokenLinks) },
     { label: "Metadatafel", before: "4", after: "0", delta: String(delta.metadata) },
@@ -410,7 +410,7 @@ const Metrics = () => {
       h(
         View,
         { style: { ...styles.tr, ...styles.trFirst, backgroundColor: C.bg } },
-        h(Text, { style: { ...styles.th, ...styles.mLabel } }, "Mätpunkt"),
+        h(Text, { style: { ...styles.th, ...styles.mLabel } }, "Metrik"),
         h(Text, { style: { ...styles.th, ...styles.mBefore } }, "Före"),
         h(Text, { style: { ...styles.th, ...styles.mAfter } }, "Efter"),
         h(Text, { style: { ...styles.th, ...styles.mDelta } }, "Förändring")
@@ -485,7 +485,7 @@ const Ready = () =>
       h(
         Text,
         { style: styles.readyText },
-        "Alla kontroller passerade: tillgänglighet, innehåll, betalning, e-post, mobil, förtroende och SEO. Daglig crawl fortsätter. Nästa veckorapport genereras automatiskt fredag 09:00."
+        "Alla kontroller passerade: tillgänglighet, innehåll, betalning, e-post, mobil, förtroende och SEO. Daglig skanning fortsätter. Nästa veckorapport publiceras fredag 09:00."
       )
     )
   );
@@ -494,11 +494,11 @@ const Audit = () =>
   h(
     View,
     { style: styles.audit },
-    h(Text, { style: styles.auditLabel }, "Revisionslogg"),
+    h(Text, { style: styles.auditLabel }, "Revisionsspår"),
     h(
       Text,
       { style: styles.auditText },
-      "Alla 13 ändringar i denna rapport bekräftades av tenant via korrigeringsarket den 2026-05-16. Tenant behåller full kontroll över alla beslut; Pam publicerar endast godkända ändringar."
+      "Alla 13 ändringar godkändes av tenant via korrigeringsdokumentet 2026-05-16. Tenant behåller full kontroll över alla beslut; Pam genomför endast godkända ändringar."
     )
   );
 
@@ -506,16 +506,16 @@ const Footer = () =>
   h(
     Text,
     { style: styles.footer },
-    "Web Assessment Agency · webassessment.agency · Genererad av Pam — Before/After-rapport"
+    "Web Assessment Agency · webassessment.agency · Genererad av Pam — Före/Efter-rapport"
   );
 
 const Doc = () =>
   h(
     Document,
     {
-      title: "Before/After-rapport — Vecka 20",
+      title: "Före/Efter-rapport — Vecka 20",
       author: "Web Assessment Agency",
-      subject: "Exempel Before/After-rapport",
+      subject: "Exempel Före/Efter-rapport",
     },
     h(
       Page,

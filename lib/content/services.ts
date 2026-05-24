@@ -14,15 +14,15 @@ export const services: Service[] = [
       "Rewrite recommendations",
     ],
     category: "Audit",
-    nameSv: "Fullständig webbplatsbedömning",
+    nameSv: "Fullständig webbplatsgranskning",
     shortDescriptionSv:
-      "Genomgång av struktur, innehåll, layout och fel på mobil och desktop.",
+      "Genomgång av struktur, innehåll, layout och fel på både mobil och desktop.",
     featuresSv: [
       "Innehållskvalitet och tydlighet",
       "Granskning av navigation och struktur",
       "Layoutkontroller för mobil och desktop",
-      "Trasiga länkar, metadata, saknade fält",
-      "Omskrivningsförslag",
+      "Trasiga länkar, metadata och saknade fält",
+      "Rekommendationer för omskrivning",
     ],
   },
   {
@@ -37,14 +37,14 @@ export const services: Service[] = [
       "Winning version recommendation",
     ],
     category: "Conversion",
-    nameSv: "A/B-testning av betalningssida",
+    nameSv: "A/B-testning av betalnings- och checkout-flöden",
     shortDescriptionSv:
-      "Test av rubriker, CTA:er, layout och förtroendeelement.",
+      "Test av rubriker, CTA:er, layout och förtroendeelement i betalningsflöden.",
     featuresSv: [
-      "Rubrik- och CTA-varianter",
-      "Layout och förtroendeelement",
+      "Varianter av rubriker och CTA:er",
+      "Layout- och förtroendeelement",
       "Konverteringsspårning",
-      "Rekommenderad vinnande version",
+      "Rekommendation av vinnande version",
     ],
   },
   {
@@ -61,12 +61,12 @@ export const services: Service[] = [
     category: "Automation",
     nameSv: "Granskning av e-postautomatisering",
     shortDescriptionSv:
-      "Kontroll av triggers, sekvenser, texttydlighet och flödesprestanda.",
+      "Kontroll av triggers, sekvenser, tydlighet och prestanda i e-postflöden.",
     featuresSv: [
-      "Trigger-validering",
-      "Sekvensstruktur",
+      "Validering av triggers",
+      "Struktur för sekvenser",
       "Texttydlighet",
-      "Omskrivningsförslag",
+      "Förslag på omskrivningar",
     ],
   },
   {
@@ -82,11 +82,11 @@ export const services: Service[] = [
     category: "Content",
     nameSv: "Veckovis innehåll för sociala medier",
     shortDescriptionSv:
-      "3–5 publiceringsklara inlägg per vecka med enkla visuella element.",
+      "3–5 plattformsredo inlägg per vecka med enkla visuella element.",
     featuresSv: [
       "3–5 inlägg per vecka",
-      "Plattformsklara texter",
-      "Enkla visuella element",
+      "Plattformsredo text",
+      "Enkla visuella komponenter",
     ],
   },
   {
@@ -101,14 +101,14 @@ export const services: Service[] = [
       "Improvement summary",
     ],
     category: "Reporting",
-    nameSv: "Before/After-hälsorapport",
+    nameSv: "Före/Efter-rapport",
     shortDescriptionSv:
-      "Ögonblicksbild och jämförelserapport som visar mätbara förbättringar efter åtgärder.",
+      "Översikt och jämförelse som visar mätbara förbättringar efter genomförda åtgärder.",
     featuresSv: [
-      "Innehållsöversikt",
+      "Innehållssnapshot",
       "Strukturjämförelse",
       "Förtroendeindikatorer",
-      "Förbättringssammanfattning",
+      "Sammanfattning av förbättringar",
     ],
   },
   {
@@ -125,11 +125,11 @@ export const services: Service[] = [
     category: "Monitoring",
     nameSv: "Plattformsmonitorering",
     shortDescriptionSv:
-      "Veckovisa scans för fel, innehållsdrift och trasiga flöden — med åtgärdslista.",
+      "Veckovisa kontroller av fel, innehållsdrift och brutna flöden — med åtgärdslista.",
     featuresSv: [
-      "Veckovisa scans",
+      "Veckovisa skanningar",
       "Felidentifiering",
-      "Förändringsspårning",
+      "Spårning av förändringar",
       "Åtgärdslista",
     ],
   },

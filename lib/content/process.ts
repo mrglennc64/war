@@ -19,10 +19,10 @@ export const processSteps: ProcessStep[] = [
     output: "Access checklist · signed scope · success metrics",
     who: "You",
     durationDays: 1,
-    titleSv: "Discovery & access",
+    titleSv: "Upptäcktsfas & åtkomst",
     descriptionSv:
-      "Kort uppstartssamtal för att kartlägga webbplatser, betalflöde, e-postverktyg och analys. Vi får läsåtkomst — aldrig skrivåtkomst — till systemen vi granskar.",
-    outputSv: "Access-checklista · signerad scope · mått för framgång",
+      "Kort uppstartssamtal där vi kartlägger webbplatser, betalningsflöden, e-postverktyg och analysdata. Vi får endast läsbehörighet — aldrig skrivbehörighet — till systemen vi granskar.",
+    outputSv: "åtkomstchecklista · signerad scope · målsättning",
   },
   {
     n: 2,
@@ -32,10 +32,10 @@ export const processSteps: ProcessStep[] = [
     output: "Baseline health report (PDF) · before-state snapshot",
     who: "Us",
     durationDays: 3,
-    titleSv: "Baseline-bedömning",
+    titleSv: "Grundbedömning",
     descriptionSv:
-      "Pam kör första djupscannen. Vi lägger på manuell granskning: struktur, tydlighet, mobil/desktop, betalningssignaler, trasiga länkar, metadata.",
-    outputSv: "Baseline-hälsorapport (PDF) · before-state-snapshot",
+      "Pam gör första djupskanningen. Vi kompletterar med manuell granskning: struktur, innehållstydlighet, mobil/desktop, betalningsflöden, förtroendesignaler, trasiga länkar och metadata.",
+    outputSv: "grundrapport (PDF) · nulägesöversikt",
   },
   {
     n: 3,
@@ -45,10 +45,10 @@ export const processSteps: ProcessStep[] = [
     output: "Corrections worksheet · approved change list",
     who: "You",
     durationDays: 2,
-    titleSv: "Tenant-bekräftelse",
+    titleSv: "Bekräftelse av ändringar",
     descriptionSv:
-      "Du granskar alla föreslagna ändringar i ett korrigeringsark — acceptera, avvisa eller redigera. Inget går live utan ditt godkännande.",
-    outputSv: "Korrigeringsark · godkänd ändringslista",
+      "Du granskar alla föreslagna ändringar i ett korrigeringsdokument — accepterar, avvisar eller justerar. Inget genomförs utan ditt godkännande.",
+    outputSv: "korrigeringsdokument · lista över godkända ändringar",
   },
   {
     n: 4,
@@ -58,10 +58,10 @@ export const processSteps: ProcessStep[] = [
     output: "Live changes · verification log",
     who: "Us",
     durationDays: 3,
-    titleSv: "Implementera & verifiera",
+    titleSv: "Genomförande & verifiering",
     descriptionSv:
-      "Vi implementerar godkända ändringar — A/B-varianter, omskrivningar, länkfixar, e-postsekvenspatchar, metadata. Varje ändring verifieras innan publicering.",
-    outputSv: "Live-ändringar · verifieringslogg",
+      "Vi implementerar de godkända ändringarna — A/B-varianter, omskrivningar, fix av trasiga länkar, uppdaterade e-postsekvenser, metadata. Varje ändring verifieras innan den går live.",
+    outputSv: "genomförda ändringar · verifieringslogg",
   },
   {
     n: 5,
@@ -73,8 +73,8 @@ export const processSteps: ProcessStep[] = [
     durationDays: 7,
     titleSv: "Veckorytmen startar",
     descriptionSv:
-      "Pam tar över rytmen: daglig crawl, veckoscan, A/B-övervakning, e-postvalidering. Du får en strukturerad veckorapport varje fredag.",
-    outputSv: "Veckorapport (PDF) · åtgärdspunkter",
+      "Pam tar över: daglig skanning, veckovis djupanalys, A/B-övervakning, validering av e-post. Du får en strukturerad veckorapport varje fredag.",
+    outputSv: "veckorapport (PDF) · åtgärdslista",
   },
   {
     n: 6,
@@ -86,8 +86,8 @@ export const processSteps: ProcessStep[] = [
     durationDays: 30,
     titleSv: "Löpande drift",
     descriptionSv:
-      "Alla ändringar kräver fortsatt ditt godkännande. Triggers — konverteringsfall, innehållsdrift, automationsfel — eskaleras direkt till en människa hos oss.",
-    outputSv: "Månatlig djupgranskning · before/after-rapport vid behov",
+      "Alla ändringar kräver fortsatt godkännande från dig. Triggers — konverteringsfall, innehållsdrift, automationsfel — eskaleras direkt till en människa hos oss.",
+    outputSv: "månadsöversikt · före/efter-rapport vid behov",
   },
 ];
 
@@ -106,7 +106,7 @@ export const cadenceTable: Cadence[] = [
     what: "Site crawl · error detection · uptime check",
     trigger: "Automatic — 04:00 local",
     frequencySv: "Dagligen",
-    whatSv: "Site-crawl · felkontroll · uptime",
+    whatSv: "Webbskanning · felkontroll · upptidskontroll",
     triggerSv: "Automatiskt — 04:00 lokal tid",
   },
   {
@@ -114,7 +114,7 @@ export const cadenceTable: Cadence[] = [
     what: "Full scan · A/B test review · email validation · weekly report",
     trigger: "Automatic — Friday 09:00",
     frequencySv: "Veckovis",
-    whatSv: "Full scan · A/B-granskning · e-postvalidering · veckorapport",
+    whatSv: "Full skanning · A/B-översyn · e-postvalidering · veckorapport",
     triggerSv: "Automatiskt — fredag 09:00",
   },
   {
@@ -122,8 +122,8 @@ export const cadenceTable: Cadence[] = [
     what: "Deep content review · before/after report",
     trigger: "Automatic — first of month",
     frequencySv: "Månadsvis",
-    whatSv: "Djup innehållsgranskning · before/after-rapport",
-    triggerSv: "Automatiskt — första dagen i månaden",
+    whatSv: "Djup innehållsgranskning · före/efter-rapport",
+    triggerSv: "Automatiskt — månadens första dag",
   },
   {
     frequency: "On trigger",
@@ -131,7 +131,7 @@ export const cadenceTable: Cadence[] = [
     trigger: "Threshold breached",
     frequencySv: "Vid trigger",
     whatSv: "Konverteringsfall · sidändring · automationsfel",
-    triggerSv: "Tröskel passerad",
+    triggerSv: "Tröskel uppnådd",
   },
 ];
 
@@ -147,9 +147,9 @@ export const guarantees: Guarantee[] = [
     title: "Read-only by default",
     description:
       "We get read access. You retain write access. Changes ship through your existing publishing flow, with your sign-off.",
-    titleSv: "Läsåtkomst som standard",
+    titleSv: "Läsbehörighet som standard",
     descriptionSv:
-      "Vi har läsåtkomst. Du behåller skrivåtkomst. Ändringar publiceras via ditt befintliga publiceringsflöde, med ditt godkännande.",
+      "Vi har endast läsbehörighet. Du behåller skrivbehörighet. Alla ändringar går via ditt befintliga publiceringsflöde.",
   },
   {
     title: "Nothing ships without tenant sign-off",
@@ -157,7 +157,7 @@ export const guarantees: Guarantee[] = [
       "Every change is shown to you in a worksheet first. You accept, reject, or edit. Pam only applies what you explicitly approved.",
     titleSv: "Inget går live utan ditt godkännande",
     descriptionSv:
-      "Alla ändringar visas i ett korrigeringsark. Du accepterar, avvisar eller redigerar. Pam publicerar endast det du godkänt.",
+      "Alla ändringar visas i ett korrigeringsdokument. Du accepterar, avvisar eller justerar. Pam genomför endast det du godkänt.",
   },
   {
     title: "Structured PDF report every Friday",
@@ -165,15 +165,15 @@ export const guarantees: Guarantee[] = [
       "Same format every week — status pill, KPI tiles, validation checks, per-site status, audit trail. Skim it in 2 minutes.",
     titleSv: "Strukturerad PDF-rapport varje fredag",
     descriptionSv:
-      "Samma format varje vecka — status, KPI-rutor, valideringar, per-site-status, revisionsspår. Går att skumma på två minuter.",
+      "Samma format varje vecka — statusindikator, KPI-panel, valideringskontroller, per-site-status, revisionsspår. Går att skumma på två minuter.",
   },
   {
     title: "Human escalation on every trigger",
     description:
       "When Pam detects a conversion drop, content drift, or automation failure, a human on our side is paged before you are.",
-    titleSv: "Mänsklig eskalering vid varje trigger",
+    titleSv: "Mänsklig eskalering vid varje avvikelse",
     descriptionSv:
-      "När Pam ser konverteringsfall, innehållsdrift eller automationsfel, pingas en människa hos oss innan du får aviseringen.",
+      "Vid konverteringsfall, innehållsdrift eller automationsfel kontaktas en människa hos oss innan du får aviseringen.",
   },
 ];
 
@@ -188,25 +188,25 @@ export const faqs: Faq[] = [
   {
     q: "Do you need admin or write access to our site?",
     a: "No. Read-only is enough for monitoring. For changes, we hand you a worksheet — you (or your team) publish through your existing flow.",
-    qSv: "Behöver ni admin- eller skrivåtkomst till vår webbplats?",
-    aSv: "Nej. Läsåtkomst räcker för övervakning. För ändringar får du ett korrigeringsark — du (eller ditt team) publicerar via ert befintliga flöde.",
+    qSv: "Behöver ni admin- eller skrivbehörighet?",
+    aSv: "Nej. Endast läsbehörighet.",
   },
   {
     q: "What does the first week look like?",
     a: "Day 1: kickoff and access. Days 2–4: baseline assessment. Days 5–6: you review the corrections worksheet. Day 7: approved changes go live and the weekly cadence begins.",
     qSv: "Hur ser första veckan ut?",
-    aSv: "Dag 1: uppstart och åtkomst. Dag 2–4: baseline-bedömning. Dag 5–6: du granskar korrigeringsarket. Dag 7: godkända ändringar går live och veckorytmen startar.",
+    aSv: "Upptäcktsfas, grundbedömning och första omgången godkända ändringar.",
   },
   {
     q: "Which tools do you support?",
     a: "Most stacks. We've worked with Webflow, WordPress, Shopify, Stripe checkout, Klaviyo, ActiveCampaign, GA4, Plausible. If your stack isn't listed, ask.",
     qSv: "Vilka verktyg stödjer ni?",
-    aSv: "De flesta stackar. Vi har arbetat med Webflow, WordPress, Shopify, Stripe checkout, Klaviyo, ActiveCampaign, GA4, Plausible. Saknas din stack — fråga.",
+    aSv: "De flesta CMS, betalningslösningar, e-postplattformar och analysverktyg.",
   },
   {
     q: "Can we cancel anytime?",
     a: "Yes. Monthly plans, no lock-in. You keep all the reports we've generated.",
     qSv: "Kan vi avsluta när som helst?",
-    aSv: "Ja. Månatliga avtal, ingen bindningstid. Du behåller alla rapporter vi tagit fram.",
+    aSv: "Ja, månadsvis uppsägning.",
   },
 ];
