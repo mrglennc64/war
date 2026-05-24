@@ -1,5 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useState, type FormEvent } from "react";
+import Link from "next/link";
 import { Container } from "./components/Container";
 import { Section } from "./components/Section";
 import { Button } from "./components/Button";
@@ -13,6 +16,50 @@ export default function HomePage() {
   const { locale } = useLocale();
   const t = useT();
   const sv = locale === "sv";
+  const router = useRouter();
+
+  const [email, setEmail] = useState("");
+  const [url, setUrl] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [previousScanUrl, setPreviousScanUrl] = useState<string | null>(null);
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setPreviousScanUrl(null);
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/free-scan", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email, url }),
+      });
+      const data = (await res.json().catch(() => ({}))) as {
+        scanUrl?: string;
+        error?: string;
+        daysUntilNext?: number;
+        previousScanUrl?: string;
+      };
+      if (res.status === 201 && data.scanUrl) {
+        router.push(data.scanUrl);
+        return;
+      }
+      if (res.status === 429 && data.daysUntilNext != null) {
+        setError(
+          t("home.freeScan.errRateLimited", { days: data.daysUntilNext })
+        );
+        if (data.previousScanUrl) setPreviousScanUrl(data.previousScanUrl);
+        setSubmitting(false);
+        return;
+      }
+      setError(data.error ?? t("home.freeScan.errGeneric"));
+      setSubmitting(false);
+    } catch {
+      setError(t("home.freeScan.errGeneric"));
+      setSubmitting(false);
+    }
+  }
 
   return (
     <>
@@ -25,11 +72,85 @@ export default function HomePage() {
             <p className="mt-5 text-lg text-text-muted leading-relaxed">
               {t("home.hero.lead")}
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button href="/services">{t("home.hero.viewServices")}</Button>
-              <Button href="/how-it-works" variant="outline">{t("home.hero.howItWorks")}</Button>
-              <Button href="/pricing" variant="outline">{t("home.hero.pricing")}</Button>
-            </div>
+
+            <form
+              onSubmit={handleSubmit}
+              className="mt-8 rounded-xl border border-border bg-surface p-5 shadow-sm sm:p-6"
+            >
+              <p className="text-xs font-semibold uppercase tracking-wider text-wa-primary">
+                {t("home.freeScan.eyebrow")}
+              </p>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label
+                    htmlFor="freescan-email"
+                    className="block text-xs font-medium text-text-muted"
+                  >
+                    {t("home.freeScan.emailLabel")}
+                  </label>
+                  <input
+                    id="freescan-email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    placeholder={t("home.freeScan.emailPlaceholder")}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="mt-1.5 block w-full rounded-md border border-border bg-bg px-3 py-2 text-sm text-text focus:border-wa-primary focus:outline-none focus:ring-1 focus:ring-wa-primary"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="freescan-url"
+                    className="block text-xs font-medium text-text-muted"
+                  >
+                    {t("home.freeScan.urlLabel")}
+                  </label>
+                  <input
+                    id="freescan-url"
+                    type="text"
+                    inputMode="url"
+                    required
+                    placeholder={t("home.freeScan.urlPlaceholder")}
+                    value={url}
+                    onChange={(e) => setUrl(e.target.value)}
+                    className="mt-1.5 block w-full rounded-md border border-border bg-bg px-3 py-2 font-mono text-sm text-text focus:border-wa-primary focus:outline-none focus:ring-1 focus:ring-wa-primary"
+                  />
+                </div>
+              </div>
+
+              {error && (
+                <div className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                  {error}
+                  {previousScanUrl && (
+                    <>
+                      {" "}
+                      <Link
+                        href={previousScanUrl}
+                        className="font-medium underline"
+                      >
+                        {t("home.freeScan.viewPrevious")}
+                      </Link>
+                    </>
+                  )}
+                </div>
+              )}
+
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                <p className="text-xs text-text-muted">
+                  {t("home.freeScan.note")}
+                </p>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="inline-flex items-center justify-center rounded-md bg-wa-primary px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-wa-primary-dark disabled:opacity-60"
+                >
+                  {submitting
+                    ? t("home.freeScan.submitting")
+                    : t("home.freeScan.submit")}
+                </button>
+              </div>
+            </form>
           </div>
         </Container>
       </Section>
