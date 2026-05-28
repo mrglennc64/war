@@ -497,9 +497,9 @@ function toCarinaLines(label: string, detail: string | undefined, severity: Find
   if (/^Site title:/.test(L)) return out("Title captured.");
   if (L === "Description captured") return out("Description captured.");
   if (/^No meta description for context/.test(L)) return out("Description missing.");
-  if (L === "Drafted with Claude") return out("Draft posts generated.");
-  if (/^LLM error:/.test(L) || /^ANTHROPIC_API_KEY not set/.test(L)) {
-    return out("Draft posts generated using fallback templates.");
+  if (/^\d+ draft post\(s\) generated/.test(L)) {
+    const n = L.match(/^(\d+)/)?.[1] ?? "0";
+    return out(`${n} draft social ${plural(Number(n), "post")} generated.`);
   }
 
   // ─ Synthetic browser check ─
